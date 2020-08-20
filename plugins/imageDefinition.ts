@@ -1,5 +1,12 @@
 const images = [
   {
+    title: 'No images',
+    src: '',
+    x: 0,
+    y: 0,
+    size: 0
+  },
+  {
     title: 'Al-Pd-Fe Liquidus Surface',
     src: '/diagrams/al_pd_fe_liquidus_surface.jpg',
     x: 0.038,

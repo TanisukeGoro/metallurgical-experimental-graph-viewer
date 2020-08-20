@@ -6,10 +6,91 @@
           <v-card outlined>
             <v-data-table
               :headers="headers"
-              :items="rawData"
+              :items="dataSets"
               :items-per-page="10"
               class="elevation-1"
-            ></v-data-table>
+            >
+              <template v-slot:top>
+                <v-toolbar flat color="white">
+                  <v-dialog v-model="dialog" max-width="500px">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        color="primary"
+                        dark
+                        class="mb-2"
+                        v-bind="attrs"
+                        v-on="on"
+                        >Add Points</v-btn
+                      >
+                    </template>
+                    <v-card>
+                      <v-card-title>
+                        <span class="headline">{{ formTitle }}</span>
+                      </v-card-title>
+
+                      <v-card-text>
+                        <v-container>
+                          <v-row>
+                            <v-col cols="12" sm="6" md="4">
+                              <v-text-field
+                                v-model="editedItem.label"
+                                label="label name"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="4">
+                              <v-text-field
+                                v-model="editedItem.Al"
+                                label="Al at.%"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="4">
+                              <v-text-field
+                                v-model="editedItem.Pd"
+                                label="Pd at.%"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="4">
+                              <v-text-field
+                                v-model="editedItem.Ru"
+                                label="Ru"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="4">
+                              {{
+                                Number(editedItem.Al) +
+                                  Number(editedItem.Pd) +
+                                  Number(editedItem.Ru)
+                              }}
+                            </v-col>
+                          </v-row>
+                        </v-container>
+                      </v-card-text>
+
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="blue darken-1" text @click="close"
+                          >Cancel</v-btn
+                        >
+                        <v-btn color="blue darken-1" text @click="save"
+                          >Save</v-btn
+                        >
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
+                </v-toolbar>
+              </template>
+              <template v-slot:item.actions="{ item }">
+                <v-icon small class="mr-2" @click="editItem(item)">
+                  mdi-pencil
+                </v-icon>
+                <v-icon small @click="deleteItem(item)">
+                  mdi-delete
+                </v-icon>
+              </template>
+              <template v-slot:no-data>
+                <v-btn color="primary" @click="initialize">Reset</v-btn>
+              </template>
+            </v-data-table>
           </v-card>
         </v-col>
         <v-col outlined md="6" cols="12">
@@ -74,6 +155,24 @@ interface Select {
 
 @Component
 export default class TernalyPlot extends Vue {
+  editedItem: {
+    Al: number
+    Ru: number
+    Pd: number
+    label: string
+  } = { Al: 0, Ru: 0, Pd: 0, label: '' }
+
+  defaultItem: {
+    Al: number
+    Ru: number
+    Pd: number
+    label: string
+  } = { Al: 0, Ru: 0, Pd: 0, label: '' }
+
+  dataSets: any = []
+  editedIndex: number = -1
+  dialog: boolean = false
+
   imgXpoint: number = 0.379
   imgYpoint: number = 0.79
   imgSize: number = 0.86
@@ -87,13 +186,13 @@ export default class TernalyPlot extends Vue {
     label: string
   }[] = [
     { Al: 72.2, Ru: 13.9, Pd: 13.9, label: 'P40<->C' },
-    { Al: 71.4, Ru: 11.9, Pd: 16.7, label: 'P40 calc.' },
+    // { Al: 71.4, Ru: 11.9, Pd: 16.7, label: 'P40 calc.' },
     { Al: 72.0, Ru: 11.6, Pd: 16.4, label: 'P40 obs.' },
-    { Al: 71.0, Ru: 10, Pd: 19, label: '1/2 obs..' },
-    { Al: 72.35862222, Ru: 11.97194444, Pd: 15.66941111, label: 'x = 0' },
-    { Al: 71.26068333, Ru: 12.21173333, Pd: 16.5276, label: 'x = 10' },
-    { Al: 70.43638333, Ru: 12.84366667, Pd: 16.71996667, label: 'x= 15' },
-    { Al: 71.94599167, Ru: 12.491075, Pd: 15.56291667, label: 'x= 20' },
+    // { Al: 71.0, Ru: 10, Pd: 19, label: '1/2 obs..' },
+    // { Al: 72.36, Ru: 11.97, Pd: 15.67, label: 'x = 0' },
+    // { Al: 71.26, Ru: 12.21, Pd: 16.53, label: 'x = 10' },
+    // { Al: 70.44, Ru: 12.84, Pd: 16.72, label: 'x= 15' },
+    // { Al: 71.95, Ru: 12.49, Pd: 15.56, label: 'x= 20' },
     // { Al: 67.2, Ru: 8.4, Pd: 24.4, label: 'P20 epma' },
     { Al: 70.0, Ru: 7.7, Pd: 22.3, label: 'P20 ref.' },
     { Al: 70.0, Ru: 9.0, Pd: 21.0, label: 'P20' }
@@ -111,38 +210,50 @@ export default class TernalyPlot extends Vue {
     { text: 'label', align: 'start', sortable: true, value: 'label' },
     { text: 'Al at.%', align: 'center', sortable: true, value: 'Al' },
     { text: 'Pd at.%', align: 'center', sortable: true, value: 'Pd' },
-    { text: 'Ru at.%', align: 'center', sortable: true, value: 'Ru' }
+    { text: 'Ru at.%', align: 'center', sortable: true, value: 'Ru' },
+    { text: 'Actions', align: 'center', sortable: true, value: 'actions' }
   ]
 
+  config: { showLink: boolean; plotlyServerURL: string } = {
+    showLink: true,
+    plotlyServerURL: 'https://chart-studio.plotly.com'
+  }
+
   mounted() {
+    this.dataSets = this.rawData
     this.updateImgOffcet()
-    this.rendar()
+    this.renderReact()
   }
 
   @Watch('imgXpoint')
   onImgXpointChanged() {
-    this.rendar()
+    this.renderReact()
   }
 
   @Watch('imgYpoint')
   onImgYpointChanged() {
-    this.rendar()
+    this.renderReact()
   }
 
   @Watch('imgSize')
   onImgSizeChanged() {
-    this.rendar()
+    this.renderReact()
   }
 
   @Watch('imgOpacity')
   onImgOpacityChanged() {
-    this.rendar()
+    this.renderReact()
   }
 
   @Watch('imgSelect')
   onImgSelectChanged() {
     this.updateImgOffcet()
-    this.rendar()
+    this.renderReact()
+  }
+
+  @Watch('dataSets', { deep: true })
+  onDataSets() {
+    this.renderReact()
   }
 
   updateImgOffcet() {
@@ -151,7 +262,11 @@ export default class TernalyPlot extends Vue {
     this.imgSize = this.imgSelect.size
   }
 
-  rendar() {
+  get formTitle(): string {
+    return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+  }
+
+  renderReact() {
     Plotly.react(
       this.$refs.ternaly,
       [
@@ -170,6 +285,8 @@ export default class TernalyPlot extends Vue {
           text: this.rawData.map(function(d) {
             return d.label
           }),
+          hovertemplate:
+            '%{text}<br>Al: %{a:.2f}<br>Pd: %{b:.2f}<br>Ru: %{c:.2f}',
           marker: {
             symbol: 100,
             color: '#DB7365',
@@ -189,8 +306,8 @@ export default class TernalyPlot extends Vue {
         annotations: [
           {
             showarrow: false,
-            text: 'Partial isothermal section of Al-Pd-Ru at 1000˚C',
-            x: 1.0,
+            text: this.imgSelect.title,
+            x: 0.5,
             y: 1.3,
             font: { size: 15 }
           }
@@ -207,7 +324,8 @@ export default class TernalyPlot extends Vue {
             layer: 'below'
           }
         ]
-      }
+      },
+      this.config
     )
   }
 
@@ -223,6 +341,35 @@ export default class TernalyPlot extends Vue {
       showline: true,
       showgrid: true
     }
+  }
+
+  editItem(item: any) {
+    this.editedIndex = this.dataSets.indexOf(item)
+    this.editedItem = Object.assign({}, item)
+    this.dialog = true
+  }
+
+  deleteItem(item: any) {
+    const index = this.dataSets.indexOf(item)
+    confirm('Are you sure you want to delete this item?') &&
+      this.dataSets.splice(index, 1)
+  }
+
+  close() {
+    this.dialog = false
+    this.$nextTick(() => {
+      this.editedItem = Object.assign({}, this.defaultItem)
+      this.editedIndex = -1
+    })
+  }
+
+  save() {
+    if (this.editedIndex > -1) {
+      Object.assign(this.dataSets[this.editedIndex], this.editedItem)
+    } else {
+      this.dataSets.push(this.editedItem)
+    }
+    this.close()
   }
 }
 </script>

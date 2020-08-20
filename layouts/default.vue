@@ -66,7 +66,7 @@ export default class Default extends Vue {
   items: Array<any> = [
     {
       icon: 'mdi-apps',
-      title: 'Welcome',
+      title: 'Dashboard',
       to: '/'
     },
     {
@@ -78,12 +78,17 @@ export default class Default extends Vue {
       icon: 'mdi-chart-bubble',
       title: 'Ternary plot',
       to: '/ternary-plot'
+    },
+    {
+      icon: 'mdi-chart-bubble',
+      title: 'DTA plot',
+      to: '/dta-plot'
     }
   ]
 
   mainVariant: boolean = false
   right: boolean = true
   rightDrawer: boolean = false
-  title: string = 'Multiple Experiment Viewer'
+  title: string = 'METALLURGICAL EXPERIMENTAL GRAPH VIEWER'
 }
 </script>
