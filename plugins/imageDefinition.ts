@@ -1,9 +1,11 @@
 /**
+ * @argument title 状態図タイトル
+ * @argument x 状態図リソース
  * @argument x 3元系状態図にぴったり重ねるためのoffcet
  * @argument y 3元系状態図にぴったり重ねるためのoffcet
  * @argument size 3元系状態図にぴったり重ねるためのoffcet
  */
-interface Select {
+export interface Select {
   title: string
   src: string
   x: number
@@ -13,7 +15,7 @@ interface Select {
 
 const images: Select[] = [
   {
-    title: 'No images',
+    title: '3元系状態図の選択',
     src: '',
 
     x: 0,

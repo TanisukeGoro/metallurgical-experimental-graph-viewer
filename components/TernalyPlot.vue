@@ -3,6 +3,55 @@
     <v-container grid-list-md>
       <v-row>
         <v-col md="6">
+          <v-card class="mb-3" flat outlined>
+            <v-card-title primary-title>
+              状態図画像の位置調整
+            </v-card-title>
+            <v-card-actions class="mx-3">
+              <v-slider
+                v-model="imgXpoint"
+                class="py-0 my-0"
+                height="10"
+                min="0"
+                max="1"
+                step="0.001"
+                :label="`X: ${imgXpoint}`"
+              ></v-slider>
+            </v-card-actions>
+            <v-card-actions class="mx-3">
+              <v-slider
+                v-model="imgYpoint"
+                class="py-0 my-0"
+                height="10"
+                min="0"
+                max="3"
+                step="0.001"
+                :label="`Y: ${imgYpoint}`"
+              ></v-slider>
+            </v-card-actions>
+            <v-card-actions class="mx-3">
+              <v-slider
+                v-model="imgSize"
+                class="py-0 my-0"
+                height="10"
+                min="0"
+                max="3"
+                step="0.01"
+                :label="`SIZE: ${imgSize}`"
+              ></v-slider>
+            </v-card-actions>
+            <v-card-actions class="mx-3">
+              <v-slider
+                v-model="imgOpacity"
+                class="py-0 my-0"
+                height="10"
+                min="0"
+                max="1"
+                step="0.01"
+                :label="`OPACITY: ${imgOpacity}`"
+              ></v-slider>
+            </v-card-actions>
+          </v-card>
           <v-card outlined>
             <v-data-table
               :headers="headers"
@@ -51,15 +100,15 @@
                             </v-col>
                             <v-col cols="12" sm="6" md="4">
                               <v-text-field
-                                v-model="editedItem.Ru"
-                                label="Ru"
+                                v-model="editedItem.TM"
+                                label="TM"
                               ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="4">
                               {{
                                 Number(editedItem.Al) +
                                   Number(editedItem.Pd) +
-                                  Number(editedItem.Ru)
+                                  Number(editedItem.TM)
                               }}
                             </v-col>
                           </v-row>
@@ -95,63 +144,31 @@
         </v-col>
         <v-col outlined md="6" cols="12">
           <v-card outlined>
+            <v-card-actions class="mx-3">
+              <v-select
+                v-model="imgSelect"
+                :items="items"
+                item-text="title"
+                item-value="src"
+                label="Select"
+                return-object
+                single-line
+              ></v-select>
+            </v-card-actions>
+
             <div id="ternaly" ref="ternaly"></div>
           </v-card>
         </v-col>
       </v-row>
     </v-container>
-    <v-select
-      v-model="imgSelect"
-      :items="items"
-      item-text="title"
-      item-value="src"
-      label="Select"
-      return-object
-      single-line
-    ></v-select>
-    <v-slider
-      v-model="imgXpoint"
-      min="0"
-      max="1"
-      step="0.001"
-      :label="`X: ${imgXpoint}`"
-    ></v-slider>
-    <v-slider
-      v-model="imgYpoint"
-      min="0"
-      max="3"
-      step="0.001"
-      :label="`Y: ${imgYpoint}`"
-    ></v-slider>
-    <v-slider
-      v-model="imgSize"
-      min="0"
-      max="3"
-      step="0.01"
-      :label="`SIZE: ${imgSize}`"
-    ></v-slider>
-    <v-slider
-      v-model="imgOpacity"
-      min="0"
-      max="1"
-      step="0.01"
-      :label="`OPACITY: ${imgOpacity}`"
-    ></v-slider>
   </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component, Watch } from 'nuxt-property-decorator'
 import * as Plotly from 'plotly.js-dist'
-import imageDefinition from '@/plugins/imageDefinition'
-
-interface Select {
-  title: string
-  src: string
-  x: number
-  y: number
-  size: number
-}
+import imageDefinition, { Select } from '@/plugins/imageDefinition'
+import ternalyData, { PlotData } from '@/plugins/ternalyData'
 
 interface Axis {
   title: string
@@ -165,18 +182,11 @@ interface Axis {
   showgrid: boolean
 }
 
-interface PlotData {
-  Al: number
-  Pd: number
-  Ru: number
-  label: string
-}
-
 @Component
 export default class TernalyPlot extends Vue {
-  editedItem: PlotData = { Al: 0, Ru: 0, Pd: 0, label: '' }
+  editedItem: PlotData = { Al: 0, TM: 0, Pd: 0, label: '' }
 
-  defaultItem: PlotData = { Al: 0, Ru: 0, Pd: 0, label: '' }
+  defaultItem: PlotData = { Al: 0, TM: 0, Pd: 0, label: '' }
 
   dataSets: any = []
   editedIndex: number = -1
@@ -188,29 +198,7 @@ export default class TernalyPlot extends Vue {
   imgOpacity: number = 1
   items: object = imageDefinition
   imgSelect: Select = { ...imageDefinition[0] }
-  rawData: PlotData[] = [
-    { Al: 72.2, Ru: 13.9, Pd: 13.9, label: 'P40<->C' },
-    // { Al: 71.4, Ru: 11.9, Pd: 16.7, label: 'P40 calc.' },
-    { Al: 72.0, Ru: 11.6, Pd: 16.4, label: 'P40 obs.' }
-    // { Al: 71.0, Ru: 10, Pd: 19, label: '1/2 obs..' },
-    // { Al: 72.36, Ru: 11.97, Pd: 15.67, label: 'x = 0' },
-    // { Al: 71.26, Ru: 12.21, Pd: 16.53, label: 'x = 10' },
-    // { Al: 70.44, Ru: 12.84, Pd: 16.72, label: 'x= 15' },
-    // { Al: 71.95, Ru: 12.49, Pd: 15.56, label: 'x= 20' },
-    // { Al: 67.2, Ru: 8.4, Pd: 24.4, label: 'P20 epma' },
-    // { Al: 70.0, Ru: 7.7, Pd: 22.3, label: 'P20 ref.' },
-    // { Al: 70.0, Ru: 9.0, Pd: 21.0, label: 'P20' },
-    // { Al: 70, Ru: 20, Pd: 10, label: 'tsai I phase' },
-    // { Al: 72, Ru: 3, Pd: 25, label: 'tsai D phase' },
-    // { Al: 70, Ru: 20, Pd: 10, label: 'tsai 1/2 phase' },
-    // { Al: 75, Ru: 5, Pd: 20, label: 'tsai D + FCi' },
-    // { Al: 75, Ru: 10, Pd: 15, label: 'tsai D phase' },
-    // { Al: 75, Ru: 15, Pd: 10, label: 'tsai D phase' }
-
-    // { Al: 70.4, Ru: 14.9, Pd: 14.7, label: 'C1 epma' },
-    // { Al: 71.2, Ru: 10.8, Pd: 18.0, label: 'N13 48h' },
-    // { Al: 71.1, Ru: 11.1, Pd: 17.8, label: 'N13 120h' }
-  ]
+  rawData: PlotData[] = ternalyData
 
   headers: {
     text: string
@@ -221,7 +209,7 @@ export default class TernalyPlot extends Vue {
     { text: 'label', align: 'start', sortable: true, value: 'label' },
     { text: 'Al at.%', align: 'center', sortable: true, value: 'Al' },
     { text: 'Pd at.%', align: 'center', sortable: true, value: 'Pd' },
-    { text: 'Ru at.%', align: 'center', sortable: true, value: 'Ru' },
+    { text: 'TM at.%', align: 'center', sortable: true, value: 'TM' },
     { text: 'Actions', align: 'center', sortable: true, value: 'actions' }
   ]
 
@@ -290,7 +278,7 @@ export default class TernalyPlot extends Vue {
             return d.Al
           }),
           b: this.rawData.map(function(d) {
-            return d.Ru
+            return d.TM
           }),
           c: this.rawData.map(function(d) {
             return d.Pd
@@ -299,21 +287,21 @@ export default class TernalyPlot extends Vue {
             return d.label
           }),
           hovertemplate:
-            '%{text}<br>Al: %{a:.2f}<br>Pd: %{b:.2f}<br>Ru: %{c:.2f}',
+            '%{text}<br>Al: %{a:.2f}<br>Pd: %{b:.2f}<br>TM: %{c:.2f}',
           marker: {
             symbol: 100,
             color: '#DB7365',
-            size: 2,
-            line: { width: 1 }
+            size: 3,
+            line: { width: 1, color: '#DB7365' }
           }
         }
       ],
       {
         ternary: {
           sum: 100,
-          aaxis: this.makeAxis('Al', 0, 50),
-          baxis: this.makeAxis('Ru', 45, 0),
-          caxis: this.makeAxis('Pd', -45, 0),
+          aaxis: this.makeAxis('Al', 60, 50),
+          baxis: this.makeAxis('TM', -60, 0),
+          caxis: this.makeAxis('Pd', 0, 0),
           bgcolor: 'rgba(0,0,0,0)'
         },
         annotations: [
