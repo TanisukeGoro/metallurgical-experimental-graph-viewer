@@ -187,15 +187,22 @@ export default class TernalyPlot extends Vue {
   }[] = [
     { Al: 72.2, Ru: 13.9, Pd: 13.9, label: 'P40<->C' },
     // { Al: 71.4, Ru: 11.9, Pd: 16.7, label: 'P40 calc.' },
-    { Al: 72.0, Ru: 11.6, Pd: 16.4, label: 'P40 obs.' },
+    { Al: 72.0, Ru: 11.6, Pd: 16.4, label: 'P40 obs.' }
     // { Al: 71.0, Ru: 10, Pd: 19, label: '1/2 obs..' },
     // { Al: 72.36, Ru: 11.97, Pd: 15.67, label: 'x = 0' },
     // { Al: 71.26, Ru: 12.21, Pd: 16.53, label: 'x = 10' },
     // { Al: 70.44, Ru: 12.84, Pd: 16.72, label: 'x= 15' },
     // { Al: 71.95, Ru: 12.49, Pd: 15.56, label: 'x= 20' },
     // { Al: 67.2, Ru: 8.4, Pd: 24.4, label: 'P20 epma' },
-    { Al: 70.0, Ru: 7.7, Pd: 22.3, label: 'P20 ref.' },
-    { Al: 70.0, Ru: 9.0, Pd: 21.0, label: 'P20' }
+    // { Al: 70.0, Ru: 7.7, Pd: 22.3, label: 'P20 ref.' },
+    // { Al: 70.0, Ru: 9.0, Pd: 21.0, label: 'P20' },
+    // { Al: 70, Ru: 20, Pd: 10, label: 'tsai I phase' },
+    // { Al: 72, Ru: 3, Pd: 25, label: 'tsai D phase' },
+    // { Al: 70, Ru: 20, Pd: 10, label: 'tsai 1/2 phase' },
+    // { Al: 75, Ru: 5, Pd: 20, label: 'tsai D + FCi' },
+    // { Al: 75, Ru: 10, Pd: 15, label: 'tsai D phase' },
+    // { Al: 75, Ru: 15, Pd: 10, label: 'tsai D phase' }
+
     // { Al: 70.4, Ru: 14.9, Pd: 14.7, label: 'C1 epma' },
     // { Al: 71.2, Ru: 10.8, Pd: 18.0, label: 'N13 48h' },
     // { Al: 71.1, Ru: 11.1, Pd: 17.8, label: 'N13 120h' }

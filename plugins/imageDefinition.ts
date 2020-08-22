@@ -1,7 +1,21 @@
-const images = [
+/**
+ * @argument x 3元系状態図にぴったり重ねるためのoffcet
+ * @argument y 3元系状態図にぴったり重ねるためのoffcet
+ * @argument size 3元系状態図にぴったり重ねるためのoffcet
+ */
+interface Select {
+  title: string
+  src: string
+  x: number
+  y: number
+  size: number
+}
+
+const images: Select[] = [
   {
     title: 'No images',
     src: '',
+
     x: 0,
     y: 0,
     size: 0
@@ -21,11 +35,39 @@ const images = [
     size: 1.22
   },
   {
+    title: 'Al-Pd-Ru 1100C Partial Isothermal Section',
+    src: '/diagrams/al_pd_ru_1100.jpg',
+    x: 0.066,
+    y: 0.769,
+    size: 0.87
+  },
+  {
+    title: 'Al-Pd-Ru 1050C Partial Isothermal Section',
+    src: '/diagrams/al_pd_ru_1050.jpg',
+    x: 0.063,
+    y: 0.755,
+    size: 0.86
+  },
+  {
+    title: 'Al-Pd-Ru 1000C Partial Isothermal Section',
+    src: '/diagrams/al_pd_ru_1000.jpg',
+    x: 0.063,
+    y: 0.755,
+    size: 0.86
+  },
+  {
     title: 'Al-Pd-Ru 900C Partial Isothermal Section',
     src: '/diagrams/al_pd_ru_900.jpg',
     x: 0.066,
     y: 0.761,
     size: 0.89
+  },
+  {
+    title: 'Al-Pd-Ru 790C Partial Isothermal Section',
+    src: '/diagrams/al_pd_ru_790.jpg',
+    x: 0.068,
+    y: 0.766,
+    size: 0.88
   }
 ]
 

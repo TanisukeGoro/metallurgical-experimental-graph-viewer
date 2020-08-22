@@ -1,6 +1,11 @@
 # nuxt-ts-app
 
-> Nuxt + TypeScript + Vuetify
+TypeScriptの練習がてらに作った研究補助ツールです。  
+研究を進めることが最優先なのでリファクタや抽象化などは一旦後回しに一気にコードを書いているので読みにくいです。。。
+
+またTypeScriptも雰囲気で書いているのでアンチパターンがあればPRお願いします。
+
+> Nuxt, TypeScript, Vuetify
 
 ## Build Setup
 
@@ -19,4 +24,3 @@ $ yarn start
 $ yarn generate
 ```
 
-For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
