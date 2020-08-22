@@ -183,6 +183,7 @@ export default class App extends Vue {
    * called from upload event
    */
   logFiles(fileList: FileList) {
+    // @ts-ignore
     for (const item of fileList) {
       // eslint-disable-next-line
       console.log(item)

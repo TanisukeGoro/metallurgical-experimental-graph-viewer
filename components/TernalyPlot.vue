@@ -153,21 +153,30 @@ interface Select {
   size: number
 }
 
+interface Axis {
+  title: string
+  titlefont: { size: number }
+  min: number
+  tickangle: number
+  tickfont: { size: number; color: string }
+  tickcolor: string
+  ticklen: number
+  showline: boolean
+  showgrid: boolean
+}
+
+interface PlotData {
+  Al: number
+  Pd: number
+  Ru: number
+  label: string
+}
+
 @Component
 export default class TernalyPlot extends Vue {
-  editedItem: {
-    Al: number
-    Ru: number
-    Pd: number
-    label: string
-  } = { Al: 0, Ru: 0, Pd: 0, label: '' }
+  editedItem: PlotData = { Al: 0, Ru: 0, Pd: 0, label: '' }
 
-  defaultItem: {
-    Al: number
-    Ru: number
-    Pd: number
-    label: string
-  } = { Al: 0, Ru: 0, Pd: 0, label: '' }
+  defaultItem: PlotData = { Al: 0, Ru: 0, Pd: 0, label: '' }
 
   dataSets: any = []
   editedIndex: number = -1
@@ -179,12 +188,7 @@ export default class TernalyPlot extends Vue {
   imgOpacity: number = 1
   items: object = imageDefinition
   imgSelect: Select = { ...imageDefinition[0] }
-  rawData: {
-    Al: number
-    Ru: number
-    Pd: number
-    label: string
-  }[] = [
+  rawData: PlotData[] = [
     { Al: 72.2, Ru: 13.9, Pd: 13.9, label: 'P40<->C' },
     // { Al: 71.4, Ru: 11.9, Pd: 16.7, label: 'P40 calc.' },
     { Al: 72.0, Ru: 11.6, Pd: 16.4, label: 'P40 obs.' }
@@ -273,8 +277,10 @@ export default class TernalyPlot extends Vue {
     return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
   }
 
+  // @ts-ignore
   renderReact() {
     Plotly.react(
+      // @ts-ignore
       this.$refs.ternaly,
       [
         {
@@ -335,14 +341,15 @@ export default class TernalyPlot extends Vue {
       this.config
     )
   }
+  /* eslint-enable */
 
-  makeAxis(title: string, tickangle: number, min: number) {
+  makeAxis(title: string, tickangle: number, min: number): Axis {
     return {
       title,
       titlefont: { size: 20 },
       min,
       tickangle,
-      tickfont: { size: 15 },
+      tickfont: { size: 15, color: 'rgba(0,0,0,0)' },
       tickcolor: 'rgba(0,0,0,0)',
       ticklen: 5,
       showline: true,

@@ -1,5 +1,6 @@
 # nuxt-ts-app
 
+[metallurgical-experimental-graph-viewer](https://metallurgical-experimental-graph-viewer.netlify.app/)
 TypeScriptの練習がてらに作った研究補助ツールです。  
 研究を進めることが最優先なのでリファクタや抽象化などは一旦後回しに一気にコードを書いているので読みにくいです。。。
 
