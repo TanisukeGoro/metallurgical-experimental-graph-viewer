@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <v-app>
     <ternaly-plot></ternaly-plot>
-  </div>
+  </v-app>
 </template>
 
 <script lang="ts">

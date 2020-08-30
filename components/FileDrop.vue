@@ -24,17 +24,18 @@
       >
     </v-row>
     <v-row justify="center">
-      <span class="title indigo--text text--darken-2"
-        >DTAデータのアップロード</span
-      >
+      <span class="title indigo--text text--darken-2">{{ title }}</span>
     </v-row>
   </v-sheet>
 </template>
 <script lang="ts">
-import { Component, Vue, Emit } from 'nuxt-property-decorator'
+import { Component, Vue, Emit, Prop } from 'nuxt-property-decorator'
 
 @Component
 export default class FileDrop extends Vue {
+  @Prop({ default: '' })
+  title!: string
+
   // internal properties
   formUpload: boolean = false
   dragover: boolean = false

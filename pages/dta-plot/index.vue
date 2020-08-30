@@ -1,6 +1,10 @@
 <template>
   <v-app>
-    <file-drop class="mb-2" @files-selected="logFiles"></file-drop>
+    <file-drop
+      class="mb-2"
+      title="DTAデータのアップロード"
+      @files-selected="logFiles"
+    ></file-drop>
     <v-card flat outlined>
       <v-card-title primary-title>{{ fileName }}</v-card-title>
       <v-card-text> 最高温度: {{ dtaMaxTmp }} </v-card-text>

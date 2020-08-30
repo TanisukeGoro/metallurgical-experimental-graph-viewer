@@ -1,167 +1,165 @@
 <template>
-  <div>
-    <v-container grid-list-md>
-      <v-row>
-        <v-col md="6">
-          <v-card class="mb-3" flat outlined>
-            <v-card-title primary-title>
-              状態図画像の位置調整
-            </v-card-title>
-            <v-card-actions class="mx-3">
-              <v-slider
-                v-model="imgXpoint"
-                class="py-0 my-0"
-                height="10"
-                min="0"
-                max="1"
-                step="0.001"
-                :label="`X: ${imgXpoint}`"
-              ></v-slider>
-            </v-card-actions>
-            <v-card-actions class="mx-3">
-              <v-slider
-                v-model="imgYpoint"
-                class="py-0 my-0"
-                height="10"
-                min="0"
-                max="3"
-                step="0.001"
-                :label="`Y: ${imgYpoint}`"
-              ></v-slider>
-            </v-card-actions>
-            <v-card-actions class="mx-3">
-              <v-slider
-                v-model="imgSize"
-                class="py-0 my-0"
-                height="10"
-                min="0"
-                max="3"
-                step="0.01"
-                :label="`SIZE: ${imgSize}`"
-              ></v-slider>
-            </v-card-actions>
-            <v-card-actions class="mx-3">
-              <v-slider
-                v-model="imgOpacity"
-                class="py-0 my-0"
-                height="10"
-                min="0"
-                max="1"
-                step="0.01"
-                :label="`OPACITY: ${imgOpacity}`"
-              ></v-slider>
-            </v-card-actions>
-          </v-card>
-          <v-card outlined>
-            <v-data-table
-              :headers="headers"
-              :items="dataSets"
-              :items-per-page="10"
-              class="elevation-1"
-            >
-              <template v-slot:top>
-                <v-toolbar flat color="white">
-                  <v-dialog v-model="dialog" max-width="500px">
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn
-                        color="primary"
-                        dark
-                        class="mb-2"
-                        v-bind="attrs"
-                        v-on="on"
-                        >Add Points</v-btn
+  <v-container grid-list-md>
+    <v-row>
+      <v-col md="6">
+        <v-card class="mb-3" flat outlined>
+          <v-card-title primary-title>
+            状態図画像の位置調整
+          </v-card-title>
+          <v-card-actions class="mx-3">
+            <v-slider
+              v-model="imgXpoint"
+              class="py-0 my-0"
+              height="10"
+              min="0"
+              max="1"
+              step="0.001"
+              :label="`X: ${imgXpoint}`"
+            ></v-slider>
+          </v-card-actions>
+          <v-card-actions class="mx-3">
+            <v-slider
+              v-model="imgYpoint"
+              class="py-0 my-0"
+              height="10"
+              min="0"
+              max="3"
+              step="0.001"
+              :label="`Y: ${imgYpoint}`"
+            ></v-slider>
+          </v-card-actions>
+          <v-card-actions class="mx-3">
+            <v-slider
+              v-model="imgSize"
+              class="py-0 my-0"
+              height="10"
+              min="0"
+              max="3"
+              step="0.01"
+              :label="`SIZE: ${imgSize}`"
+            ></v-slider>
+          </v-card-actions>
+          <v-card-actions class="mx-3">
+            <v-slider
+              v-model="imgOpacity"
+              class="py-0 my-0"
+              height="10"
+              min="0"
+              max="1"
+              step="0.01"
+              :label="`OPACITY: ${imgOpacity}`"
+            ></v-slider>
+          </v-card-actions>
+        </v-card>
+        <v-card outlined>
+          <v-data-table
+            :headers="headers"
+            :items="dataSets"
+            :items-per-page="10"
+            class="elevation-1"
+          >
+            <template v-slot:top>
+              <v-toolbar flat color="white">
+                <v-dialog v-model="dialog" max-width="500px">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      color="primary"
+                      dark
+                      class="mb-2"
+                      v-bind="attrs"
+                      v-on="on"
+                      >Add Points</v-btn
+                    >
+                  </template>
+                  <v-card>
+                    <v-card-title>
+                      <span class="headline">{{ formTitle }}</span>
+                    </v-card-title>
+
+                    <v-card-text>
+                      <v-container>
+                        <v-row>
+                          <v-col cols="12" sm="6" md="4">
+                            <v-text-field
+                              v-model="editedItem.label"
+                              label="label name"
+                            ></v-text-field>
+                          </v-col>
+                          <v-col cols="12" sm="6" md="4">
+                            <v-text-field
+                              v-model="editedItem.Al"
+                              label="Al at.%"
+                            ></v-text-field>
+                          </v-col>
+                          <v-col cols="12" sm="6" md="4">
+                            <v-text-field
+                              v-model="editedItem.Pd"
+                              label="Pd at.%"
+                            ></v-text-field>
+                          </v-col>
+                          <v-col cols="12" sm="6" md="4">
+                            <v-text-field
+                              v-model="editedItem.TM"
+                              label="TM"
+                            ></v-text-field>
+                          </v-col>
+                          <v-col cols="12" sm="6" md="4">
+                            {{
+                              Number(editedItem.Al) +
+                                Number(editedItem.Pd) +
+                                Number(editedItem.TM)
+                            }}
+                          </v-col>
+                        </v-row>
+                      </v-container>
+                    </v-card-text>
+
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn color="blue darken-1" text @click="close"
+                        >Cancel</v-btn
                       >
-                    </template>
-                    <v-card>
-                      <v-card-title>
-                        <span class="headline">{{ formTitle }}</span>
-                      </v-card-title>
+                      <v-btn color="blue darken-1" text @click="save"
+                        >Save</v-btn
+                      >
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+              </v-toolbar>
+            </template>
+            <template v-slot:item.actions="{ item }">
+              <v-icon small class="mr-2" @click="editItem(item)">
+                mdi-pencil
+              </v-icon>
+              <v-icon small @click="deleteItem(item)">
+                mdi-delete
+              </v-icon>
+            </template>
+            <template v-slot:no-data>
+              <v-btn color="primary" @click="initialize">Reset</v-btn>
+            </template>
+          </v-data-table>
+        </v-card>
+      </v-col>
+      <v-col outlined md="6" cols="12">
+        <v-card outlined>
+          <v-card-actions class="mx-3">
+            <v-select
+              v-model="imgSelect"
+              :items="items"
+              item-text="title"
+              item-value="src"
+              label="Select"
+              return-object
+              single-line
+            ></v-select>
+          </v-card-actions>
 
-                      <v-card-text>
-                        <v-container>
-                          <v-row>
-                            <v-col cols="12" sm="6" md="4">
-                              <v-text-field
-                                v-model="editedItem.label"
-                                label="label name"
-                              ></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="6" md="4">
-                              <v-text-field
-                                v-model="editedItem.Al"
-                                label="Al at.%"
-                              ></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="6" md="4">
-                              <v-text-field
-                                v-model="editedItem.Pd"
-                                label="Pd at.%"
-                              ></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="6" md="4">
-                              <v-text-field
-                                v-model="editedItem.TM"
-                                label="TM"
-                              ></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="6" md="4">
-                              {{
-                                Number(editedItem.Al) +
-                                  Number(editedItem.Pd) +
-                                  Number(editedItem.TM)
-                              }}
-                            </v-col>
-                          </v-row>
-                        </v-container>
-                      </v-card-text>
-
-                      <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn color="blue darken-1" text @click="close"
-                          >Cancel</v-btn
-                        >
-                        <v-btn color="blue darken-1" text @click="save"
-                          >Save</v-btn
-                        >
-                      </v-card-actions>
-                    </v-card>
-                  </v-dialog>
-                </v-toolbar>
-              </template>
-              <template v-slot:item.actions="{ item }">
-                <v-icon small class="mr-2" @click="editItem(item)">
-                  mdi-pencil
-                </v-icon>
-                <v-icon small @click="deleteItem(item)">
-                  mdi-delete
-                </v-icon>
-              </template>
-              <template v-slot:no-data>
-                <v-btn color="primary" @click="initialize">Reset</v-btn>
-              </template>
-            </v-data-table>
-          </v-card>
-        </v-col>
-        <v-col outlined md="6" cols="12">
-          <v-card outlined>
-            <v-card-actions class="mx-3">
-              <v-select
-                v-model="imgSelect"
-                :items="items"
-                item-text="title"
-                item-value="src"
-                label="Select"
-                return-object
-                single-line
-              ></v-select>
-            </v-card-actions>
-
-            <div id="ternaly" ref="ternaly"></div>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
-  </div>
+          <div id="ternaly" ref="ternaly"></div>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script lang="ts">
