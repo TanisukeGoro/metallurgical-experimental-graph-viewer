@@ -2,6 +2,7 @@ const xrdLayout = {
   title: '',
   // width: 600,
   // height: 400,
+  autosize: true,
   xaxis: {
     range: [20, 90],
     ticks: 'inside',

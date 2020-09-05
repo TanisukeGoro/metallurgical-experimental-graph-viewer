@@ -114,7 +114,14 @@
           </file-drop>
         </v-col>
         <v-col md="8">
-          <v-card class="pa-2" outlined tile>
+          <v-card
+            id="plotarea"
+            class="pa-2"
+            outlined
+            tile
+            max-width="1000"
+            max-height="750"
+          >
             <div id="xrd" ref="xrd"></div>
           </v-card>
         </v-col>
@@ -285,6 +292,8 @@ export default class XrdPlot extends Vue {
     Plotly.react(this.$refs.xrd, this.inputData, {
       ...xrdLayout,
       title: this.graphTitle || xrdLayout.title
+      // width: 1000,
+      // height: 750
     })
   }
 

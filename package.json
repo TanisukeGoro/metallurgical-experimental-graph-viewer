@@ -1,7 +1,7 @@
 {
   "name": "metallurgical-experimental-graph-viewer",
   "version": "1.0.0",
-  "description": "Nuxt + TypeScript + Vuetify",
+  "description": "実験データの可視化サイト",
   "author": "Okita",
   "private": true,
   "scripts": {
