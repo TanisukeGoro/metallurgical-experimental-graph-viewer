@@ -4,6 +4,29 @@
       <v-row>
         <v-col md="4" class="databar">
           <v-card class="pa-2" outlined tile>
+            <v-card-actions>
+              <v-row>
+                <v-col md="4"
+                  ><v-text-field
+                    v-model="minThetaRange"
+                    dense
+                    label="低角側 [2θ]"
+                  ></v-text-field
+                ></v-col>
+                <v-col md="4"
+                  ><v-text-field
+                    v-model="maxThetaRange"
+                    dense
+                    label="高角側 [2θ]"
+                  ></v-text-field
+                ></v-col>
+                <v-col md="4">
+                  <v-btn tile outlined color="success" @click="updateGraph()">
+                    <v-icon left>mdi-cached</v-icon>更新
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-card-actions>
             <!-- =============== ダイアログ=================== -->
             <v-dialog v-model="dialog" max-width="800px">
               <template v-slot:activator="{ on, attrs }">
@@ -68,6 +91,15 @@
                 </v-card-actions>
               </v-card>
             </v-dialog>
+            <v-btn
+              color="primary"
+              outlined
+              class="mb-2"
+              v-bind="attrs"
+              v-on="on"
+              @click="inputData = []"
+              >グラフデータクリア</v-btn
+            >
             <!-- =============== ダイアログ=================== -->
           </v-card>
           <v-card
@@ -173,6 +205,9 @@ export default class XrdPlot extends Vue {
   graphTitle: string =
     'Al<sub>72.0</sub>Pd<sub>16.4</sub>(Ru<sub>(100-x)%</sub>, Fe<sub>x%</sub>)<sub>11.4</sub>'
 
+  minThetaRange: number = 0
+  maxThetaRange: number = 0
+
   editedGraphWidth: number = 0
   graphWidth = 0
   widthRule: any[] = [(v: any) => v <= 1000 || '最大1000pxまでです。']
@@ -233,6 +268,8 @@ export default class XrdPlot extends Vue {
   mounted() {
     this.graphWidth = Number(localStorage.getItem('graphWidth'))
     this.graphHeight = Number(localStorage.getItem('graphHeight'))
+    this.maxThetaRange = Number(localStorage.getItem('maxThetaRange'))
+    this.minThetaRange = Number(localStorage.getItem('minThetaRange'))
     this.renderReact()
   }
 
@@ -337,7 +374,14 @@ export default class XrdPlot extends Vue {
         ...xrdLayout,
         title: this.graphTitle || xrdLayout.title,
         width: this.graphWidth || null,
-        height: this.graphHeight || null
+        height: this.graphHeight || null,
+        xaxis: {
+          ...xrdLayout.xaxis,
+          range:
+            this.minThetaRange && this.maxThetaRange
+              ? [this.minThetaRange, this.maxThetaRange]
+              : xrdLayout.xaxis.range
+        }
       },
       this.config
     )
@@ -367,6 +411,12 @@ export default class XrdPlot extends Vue {
     this.inputData[index].mode !== 'lines'
       ? (this.inputData[index].mode = 'lines')
       : (this.inputData[index].mode = 'markers')
+  }
+
+  updateGraph() {
+    localStorage.setItem('minThetaRange', String(this.minThetaRange))
+    localStorage.setItem('maxThetaRange', String(this.maxThetaRange))
+    this.renderReact()
   }
 }
 </script>
