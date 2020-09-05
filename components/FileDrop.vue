@@ -1,13 +1,5 @@
 <template>
-  <v-sheet
-    id="dropzone"
-    ref="dzone"
-    tabindex="0"
-    title="Click to grap a file from your PC!"
-    width="100%"
-    style="cursor:pointer;"
-    height="100"
-  >
+  <div :class="{ boader: dragover }">
     <input
       id="fileUpload"
       ref="upload"
@@ -15,18 +7,20 @@
       accept="text/xml"
       style="display:none"
     />
-    <v-row justify="center">
+
+    <slot></slot>
+    <!-- <v-row justify="center">
       <v-icon v-if="!dragover" color="indigo darken-2" size="75"
         >mdi-cloud-upload-outline</v-icon
       >
       <v-icon v-if="dragover" color="indigo darken-2" size="75"
         >mdi-book-plus</v-icon
       >
-    </v-row>
-    <v-row justify="center">
+    </v-row> -->
+    <!-- <v-row justify="center">
       <span class="title indigo--text text--darken-2">{{ title }}</span>
-    </v-row>
-  </v-sheet>
+    </v-row> -->
+  </div>
 </template>
 <script lang="ts">
 import { Component, Vue, Emit, Prop } from 'nuxt-property-decorator'
@@ -102,3 +96,9 @@ export default class FileDrop extends Vue {
   }
 }
 </script>
+
+<style scoped>
+.boader {
+  border: solid 1px rgb(34, 192, 255);
+}
+</style>

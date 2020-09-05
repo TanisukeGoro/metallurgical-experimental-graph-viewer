@@ -1,19 +1,16 @@
 <template>
   <v-app>
-    <file-drop
-      class="mb-2"
-      title="DTAデータのアップロード"
-      @files-selected="logFiles"
-    ></file-drop>
-    <v-card flat outlined>
-      <v-card-title primary-title>{{ fileName }}</v-card-title>
-      <v-card-text> 最高温度: {{ dtaMaxTmp }} </v-card-text>
-      <v-card-actions>
-        <v-btn :loading="isLoading" @click="copyExperimentalData()"
-          >実験概要のコピー</v-btn
-        >
-      </v-card-actions>
-    </v-card>
+    <file-drop class="mb-2" @files-selected="logFiles">
+      <v-card flat outlined>
+        <v-card-title primary-title>{{ fileName }}</v-card-title>
+        <v-card-text> 最高温度: {{ dtaMaxTmp }} </v-card-text>
+        <v-card-actions>
+          <v-btn :loading="isLoading" @click="copyExperimentalData()"
+            >実験概要のコピー</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </file-drop>
     <v-container grid-list-md>
       <v-text-field v-model="minTemp" label="最小温度"></v-text-field>
       <v-text-field v-model="maxTemp" label="最大温度"></v-text-field>
@@ -74,7 +71,7 @@ const defaultDTA = [{ tag: '', time: 0, temp: 0, tg: 0, dta: 0, ddta: 0 }]
   }
 })
 export default class App extends Vue {
-  fileName: string = 'ファイル未入力'
+  fileName: string = 'ファイルをドラック&ドロップでCSVデータを追加'
   minTemp: number = 900
   maxTemp: number = 1200
   isLoading: boolean = false

@@ -14,7 +14,7 @@
               min="0"
               max="1"
               step="0.001"
-              :label="`X: ${imgXpoint}`"
+              :label="`X: ${imgXpoint.toFixed(3)}`"
             ></v-slider>
           </v-card-actions>
           <v-card-actions class="mx-3">
@@ -25,7 +25,7 @@
               min="0"
               max="3"
               step="0.001"
-              :label="`Y: ${imgYpoint}`"
+              :label="`Y: ${imgYpoint.toFixed(3)}`"
             ></v-slider>
           </v-card-actions>
           <v-card-actions class="mx-3">
@@ -36,7 +36,7 @@
               min="0"
               max="3"
               step="0.01"
-              :label="`SIZE: ${imgSize}`"
+              :label="`SIZE: ${imgSize.toFixed(2)}`"
             ></v-slider>
           </v-card-actions>
           <v-card-actions class="mx-3">
@@ -69,6 +69,10 @@
                       v-bind="attrs"
                       v-on="on"
                       >Add Points</v-btn
+                    >
+                    <v-spacer />
+                    <v-btn color="primary" dark class="mb-2" @click="reset()"
+                      >RESET</v-btn
                     >
                   </template>
                   <v-card>
@@ -110,6 +114,10 @@
                                 Number(editedItem.TM)
                             }}
                           </v-col>
+                          <v-text-field
+                            v-model="textData"
+                            label="タブ、スペース、カンマ区切りのデータ(ex: 70, 20, 10)"
+                          ></v-text-field>
                         </v-row>
                       </v-container>
                     </v-card-text>
@@ -134,9 +142,6 @@
               <v-icon small @click="deleteItem(item)">
                 mdi-delete
               </v-icon>
-            </template>
-            <template v-slot:no-data>
-              <v-btn color="primary" @click="initialize">Reset</v-btn>
             </template>
           </v-data-table>
         </v-card>
@@ -186,7 +191,7 @@ export default class TernalyPlot extends Vue {
 
   defaultItem: PlotData = { Al: 0, TM: 0, Pd: 0, label: '' }
 
-  dataSets: any = []
+  dataSets: PlotData[] = []
   editedIndex: number = -1
   dialog: boolean = false
 
@@ -197,6 +202,7 @@ export default class TernalyPlot extends Vue {
   items: object = imageDefinition
   imgSelect: Select = { ...imageDefinition[0] }
   rawData: PlotData[] = ternalyData
+  textData: string = ''
 
   headers: {
     text: string
@@ -253,6 +259,16 @@ export default class TernalyPlot extends Vue {
     this.renderReact()
   }
 
+  @Watch('textData', { deep: true })
+  onTextData() {
+    const list = this.textData.split(/[,\t]/).map((i) => Number(i))
+    if (list.length < 3) {
+      this.textData = ''
+      return 0
+    }
+    ;[this.editedItem.Al, this.editedItem.Pd, this.editedItem.TM] = list
+  }
+
   updateImgOffcet() {
     this.imgXpoint = this.imgSelect.x
     this.imgYpoint = this.imgSelect.y
@@ -272,20 +288,20 @@ export default class TernalyPlot extends Vue {
         {
           type: 'scatterternary',
           mode: 'markers',
-          a: this.rawData.map(function(d) {
+          a: this.dataSets.map(function(d) {
             return d.Al
           }),
-          b: this.rawData.map(function(d) {
+          b: this.dataSets.map(function(d) {
             return d.TM
           }),
-          c: this.rawData.map(function(d) {
+          c: this.dataSets.map(function(d) {
             return d.Pd
           }),
-          text: this.rawData.map(function(d) {
+          text: this.dataSets.map(function(d) {
             return d.label
           }),
           hovertemplate:
-            '%{text}<br>Al: %{a:.2f}<br>Pd: %{b:.2f}<br>TM: %{c:.2f}',
+            '%{text}<br>Al: %{a:.2f}<br>Pd: %{c:.2f}<br>TM: %{b:.2f}',
           marker: {
             symbol: 100,
             color: '#DB7365',
@@ -361,6 +377,7 @@ export default class TernalyPlot extends Vue {
       this.editedItem = Object.assign({}, this.defaultItem)
       this.editedIndex = -1
     })
+    this.textData = ''
   }
 
   save() {
@@ -369,7 +386,13 @@ export default class TernalyPlot extends Vue {
     } else {
       this.dataSets.push(this.editedItem)
     }
+    this.textData = ''
     this.close()
+  }
+
+  reset() {
+    this.dataSets = [this.defaultItem]
+    this.renderReact()
   }
 }
 </script>

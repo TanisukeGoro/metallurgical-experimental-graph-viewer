@@ -8,11 +8,15 @@ export interface PlotData {
 const ternalyData: PlotData[] = [
   { Al: 72.2, TM: 13.9, Pd: 13.9, label: 'P40<->C' },
   // { Al: 71.4, TM: 11.9, Pd: 16.7, label: 'P40 calc.' },
-  { Al: 72.0, TM: 11.6, Pd: 16.4, label: 'P40 obs.' },
+  { Al: 72.0, TM: 11.6, Pd: 16.4, label: 'P40 obs. Hatakeyama' }
+  // { Al: 75.5, TM: 9.6, Pd: 14.9, label: 'ε16' },
+  // { Al: 73.2, TM: 6.6, Pd: 20.2, label: 'ε22' },
+  // { Al: 73.0, TM: 16.0, Pd: 11.0, label: 'ε + C' },
+
   // { Al: 71.0, TM: 10, Pd: 19, label: '1/2 obs..' },
 
   // Al-Pd-Fe S.Balanetskyy
-  { Al: 72.8, TM: 12.9, Pd: 14.3, label: 'Al-Pd-Fe C' },
+  // { Al: 72.8, TM: 12.9, Pd: 14.3, label: 'Al-Pd-Fe C' },
   // { Al: 68.2, TM: 10.4, Pd: 21.4, label: 'Al-Pd-Fe C1' },
   // { Al: 63, TM: 5.7, Pd: 31.3, label: 'Al-Pd-Fe C2' },
 
@@ -30,12 +34,12 @@ const ternalyData: PlotData[] = [
 
   // 実験データ
   // { Al: 72.36, TM: 11.97, Pd: 15.67, label: 'x = 0' },
-  // { Al: 71.26, TM: 12.21, Pd: 16.53, label: 'x = 10' },
-  // { Al: 70.44, TM: 12.84, Pd: 16.72, label: 'x= 15' },
-  // { Al: 71.95, TM: 12.49, Pd: 15.56, label: 'x= 20' },
+  // { Al: 71.26, TM: 12.21, Pd: 16.53, label: 'x = 5' },
+  // { Al: 70.44, TM: 12.84, Pd: 16.72, label: 'x= 10' },
+  // { Al: 71.95, TM: 12.49, Pd: 15.56, label: 'x= 20' }
   // { Al: 70.4, TM: 14.9, Pd: 14.7, label: 'C1 epma' },
-  { Al: 70.8, TM: 12.2, Pd: 17.0, label: 'N13 48h' },
-  { Al: 73.2, TM: 3.2, Pd: 23.6, label: 'N13 120h' }
+  // { Al: 70.8, TM: 12.2, Pd: 17.0, label: 'N13 Cphase' },
+  // { Al: 73.2, TM: 3.2, Pd: 23.6, label: 'N13 εphase' }
 ]
 
 export default ternalyData

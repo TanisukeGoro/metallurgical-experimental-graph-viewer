@@ -27,30 +27,15 @@
     <v-app-bar :clipped-left="clipped" fixed app flat>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title v-text="title" />
-      <v-spacer />
-      <v-btn icon @click.stop="rightDrawer = !rightDrawer">
-        <v-icon>mdi-menu</v-icon>
-      </v-btn>
     </v-app-bar>
     <v-main>
       <v-container>
         <nuxt />
       </v-container>
     </v-main>
-    <v-navigation-drawer v-model="rightDrawer" :right="right" temporary fixed>
-      <v-list>
-        <v-list-item @click.native="right = !right">
-          <v-list-item-action>
-            <v-icon light>
-              mdi-repeat
-            </v-icon>
-          </v-list-item-action>
-          <v-list-item-title>Switch drawer (click me)</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
+
     <v-footer :fixed="fixed" app>
-      <span>&copy; {{ new Date().getFullYear() }}</span>
+      <span>&copy; {{ new Date().getFullYear() }} AbeKeishi</span>
     </v-footer>
   </v-app>
 </template>
@@ -75,20 +60,18 @@ export default class Default extends Vue {
       to: '/xrd'
     },
     {
-      icon: 'mdi-chart-bubble',
+      icon: 'mdi-poll-box-outline',
       title: 'Ternary plot',
       to: '/ternary-plot'
     },
     {
-      icon: 'mdi-chart-bubble',
+      icon: 'mdi-poll-box-outline',
       title: 'DTA plot',
       to: '/dta-plot'
     }
   ]
 
   mainVariant: boolean = false
-  right: boolean = true
-  rightDrawer: boolean = false
   title: string = 'METALLURGICAL EXPERIMENTAL GRAPH VIEWER'
 }
 </script>
