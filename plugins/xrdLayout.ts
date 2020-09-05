@@ -50,6 +50,7 @@ const xrdLayout = {
     title: '',
     overlaying: 'y',
     side: 'right',
+    showticklabels: false,
     zeroline: false,
     showgrid: false
   },

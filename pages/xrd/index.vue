@@ -2,151 +2,141 @@
   <v-app>
     <v-container>
       <v-row>
-        <v-col md="4">
-          <file-drop
-            class="mb-2"
-            title="XRDデータのアップロード"
-            @files-selected="handleInputFile"
-          >
-            <v-card class="pa-2" outlined tile>
-              <v-card-text v-if="inputData.length == 0">
-                ファイルをドラック&ドロップで<br />XRDデータを追加
-              </v-card-text>
-              <!-- =============== ダイアログ=================== -->
-              <v-dialog v-model="dialog" max-width="800px">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    color="primary"
-                    dark
-                    class="mb-2"
-                    v-bind="attrs"
-                    v-on="on"
-                    >設定</v-btn
-                  >
-                </template>
-                <v-card>
-                  <v-card-title>
-                    <span class="headline">設定</span>
-                  </v-card-title>
-                  <v-card-text>
-                    <v-container>
-                      <v-row>
-                        <v-col cols="12" sm="6" md="12">
-                          <v-text-field
-                            v-model="graphTitle"
-                            dense
-                            label="グラフのタイトル(HTML対応可)"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="12" sm="6" md="4">
-                          <v-text-field
-                            v-model="commonYshift"
-                            dense
-                            label="Y軸共通シフト"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="12" sm="6" md="4">
-                          <v-text-field
-                            v-model="editedGraphWidth"
-                            :rules="widthRule"
-                            dense
-                            label="グラフ横幅"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="12" sm="6" md="4">
-                          <v-text-field
-                            v-model="editedGraphHeight"
-                            :rules="heightRule"
-                            dense
-                            label="グラフ縦幅"
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-                    </v-container>
-                  </v-card-text>
-
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="closeSettings"
-                      >Cancel</v-btn
-                    >
-                    <v-btn color="blue darken-1" text @click="saveSettings"
-                      >Save</v-btn
-                    >
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
-              <!-- =============== ダイアログ=================== -->
-            </v-card>
-            <v-card
-              v-for="(xrd, index) in inputData"
-              :key="index"
-              class="pa-2"
-              outlined
-              tile
-            >
-              <v-card class="mb-2" outlined tile>
-                <v-card-text class="pb-0">
-                  <v-text-field
-                    v-model="xrd.name"
-                    dense
-                    label="試料名"
-                  ></v-text-field>
-                  <v-row>
-                    <v-col md="6" class="py-0">
-                      <v-text-field
-                        v-model="xrd.shiftX"
-                        disabled
-                        dense
-                        label="x-shift [2θ]"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col md="6" class="py-0"
-                      ><v-text-field
-                        v-model="xrd.shiftY"
-                        disabled
-                        dense
-                        label="y-shift"
-                      ></v-text-field
-                    ></v-col>
-                  </v-row>
+        <v-col md="4" class="databar">
+          <v-card class="pa-2" outlined tile>
+            <!-- =============== ダイアログ=================== -->
+            <v-dialog v-model="dialog" max-width="800px">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  color="primary"
+                  dark
+                  class="mb-2"
+                  v-bind="attrs"
+                  v-on="on"
+                  >設定</v-btn
+                >
+              </template>
+              <v-card>
+                <v-card-title>
+                  <span class="headline">設定</span>
+                </v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <v-row>
+                      <v-col cols="12" sm="6" md="12">
+                        <v-text-field
+                          v-model="graphTitle"
+                          dense
+                          label="グラフのタイトル(HTML対応可)"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field
+                          v-model="commonYshift"
+                          dense
+                          label="Y軸共通シフト"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field
+                          v-model="editedGraphWidth"
+                          :rules="widthRule"
+                          dense
+                          label="グラフ横幅"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field
+                          v-model="editedGraphHeight"
+                          :rules="heightRule"
+                          dense
+                          label="グラフ縦幅"
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-container>
                 </v-card-text>
+
                 <v-card-actions>
-                  <v-switch
-                    :input-value="xrd.yaxis !== 'y'"
-                    :label="`第2軸: ${xrd.yaxis !== 'y' ? 'ON' : 'OFF'}`"
-                    @change="changeSecondaryAxis(index)"
-                  ></v-switch>
-                  <v-switch
-                    :disabled="xrd.rawX.length > 300"
-                    :input-value="xrd.mode !== 'lines'"
-                    :label="
-                      `回折位置のみファイル用: ${
-                        xrd.isScatter !== 'y' ? 'ON' : 'OFF'
-                      }`
-                    "
-                    @change="changeScatter(index)"
-                  ></v-switch>
                   <v-spacer></v-spacer>
-                  <v-btn small icon @click="deleteXrdData(index)">
-                    <v-icon>mdi-delete</v-icon>
-                  </v-btn>
+                  <v-btn color="blue darken-1" text @click="closeSettings"
+                    >Cancel</v-btn
+                  >
+                  <v-btn color="blue darken-1" text @click="saveSettings"
+                    >Save</v-btn
+                  >
                 </v-card-actions>
               </v-card>
-            </v-card>
-          </file-drop>
-        </v-col>
-        <v-col md="8">
+            </v-dialog>
+            <!-- =============== ダイアログ=================== -->
+          </v-card>
           <v-card
-            id="plotarea"
-            class="pa-2"
+            v-for="(xrd, index) in inputData"
+            :key="index"
+            class="pa-2 "
             outlined
             tile
-            max-width="1050"
-            max-height="800"
           >
-            <div id="xrd" ref="xrd"></div>
+            <v-card class="mb-2" outlined tile>
+              <v-card-text class="pb-0">
+                <v-text-field
+                  v-model="xrd.name"
+                  dense
+                  label="試料名"
+                ></v-text-field>
+
+                <v-row>
+                  <v-col md="6" class="py-0">
+                    <v-text-field
+                      v-model="xrd.shiftX"
+                      disabled
+                      dense
+                      label="x-shift [2θ]"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col md="6" class="py-0"
+                    ><v-text-field
+                      v-model="xrd.shiftY"
+                      disabled
+                      dense
+                      label="y-shift"
+                    ></v-text-field
+                  ></v-col>
+                </v-row>
+              </v-card-text>
+              <v-card-actions>
+                <v-switch
+                  :input-value="xrd.yaxis !== 'y'"
+                  :label="`第2軸: ${xrd.yaxis !== 'y' ? 'ON' : 'OFF'}`"
+                  @change="changeSecondaryAxis(index)"
+                ></v-switch>
+                <v-switch
+                  :disabled="xrd.rawX.length > 300"
+                  :input-value="xrd.mode !== 'lines'"
+                  :label="
+                    `回折位置のみファイル用: ${
+                      xrd.isScatter !== 'y' ? 'ON' : 'OFF'
+                    }`
+                  "
+                  @change="changeScatter(index)"
+                ></v-switch>
+                <v-spacer></v-spacer>
+                <v-btn small icon @click="deleteXrdData(index)">
+                  <v-icon>mdi-delete</v-icon>
+                </v-btn>
+              </v-card-actions>
+            </v-card>
           </v-card>
+        </v-col>
+        <v-col md="8">
+          <file-drop class="mb-2" @files-selected="handleInputFile">
+            <v-card id="plotarea" class="pa-2" outlined tile max-height="800">
+              <v-card-text v-if="inputData.length == 0">
+                ここにファイルをドラック&ドロップでXRDデータを追加
+              </v-card-text>
+              <div id="xrd" ref="xrd"></div>
+            </v-card>
+          </file-drop>
         </v-col>
       </v-row>
     </v-container>
@@ -196,9 +186,10 @@ export default class XrdPlot extends Vue {
   regXYLine = new RegExp(/.*[0-9.]+[ \t]+([0-9.]+)?/g)
   regTabSpace = new RegExp(/\s/)
 
-  config: { showLink: boolean; plotlyServerURL: string } = {
+  config: { showLink: boolean; plotlyServerURL: string; editable: boolean } = {
     showLink: true,
-    plotlyServerURL: 'https://chart-studio.plotly.com'
+    plotlyServerURL: 'https://chart-studio.plotly.com',
+    editable: true
   }
 
   temp: XRD = {
@@ -379,3 +370,10 @@ export default class XrdPlot extends Vue {
   }
 }
 </script>
+
+<style scoped>
+.databar {
+  height: 80vh;
+  overflow: auto;
+}
+</style>

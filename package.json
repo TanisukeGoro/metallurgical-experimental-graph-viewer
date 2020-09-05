@@ -18,7 +18,8 @@
     "@types/plotly.js": "^1.50.16",
     "nuxt": "^2.0.0",
     "nuxt-property-decorator": "^2.7.2",
-    "plotly.js-dist": "^1.54.7"
+    "plotly.js-dist": "^1.54.7",
+    "vuetify": "^2.3.10"
   },
   "devDependencies": {
     "@nuxt/typescript-build": "^0.6.0",
