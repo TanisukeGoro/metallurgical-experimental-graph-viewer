@@ -35,7 +35,7 @@ const xrdLayout = {
       color: 'black',
       family: 'Arial-Black, serif'
     },
-    zeroline: true,
+    zeroline: false,
     autorange: true,
     linewidth: 4,
     tickwidth: 4,
@@ -47,11 +47,11 @@ const xrdLayout = {
     showticklabels: false
   },
   yaxis2: {
-    title: 'yaxis2 title',
-    titlefont: { color: 'rgb(148, 103, 189)' },
-    tickfont: { color: 'rgb(148, 103, 189)' },
+    title: '',
     overlaying: 'y',
-    side: 'right'
+    side: 'right',
+    zeroline: false,
+    showgrid: false
   },
   legend: {
     x: 0.55,

@@ -45,6 +45,22 @@
                             label="Y軸共通シフト"
                           ></v-text-field>
                         </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                          <v-text-field
+                            v-model="editedGraphWidth"
+                            :rules="widthRule"
+                            dense
+                            label="グラフ横幅"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                          <v-text-field
+                            v-model="editedGraphHeight"
+                            :rules="heightRule"
+                            dense
+                            label="グラフ縦幅"
+                          ></v-text-field>
+                        </v-col>
                       </v-row>
                     </v-container>
                   </v-card-text>
@@ -101,10 +117,17 @@
                     :label="`第2軸: ${xrd.yaxis !== 'y' ? 'ON' : 'OFF'}`"
                     @change="changeSecondaryAxis(index)"
                   ></v-switch>
+                  <v-switch
+                    :disabled="xrd.rawX.length > 300"
+                    :input-value="xrd.mode !== 'lines'"
+                    :label="
+                      `回折位置のみファイル用: ${
+                        xrd.isScatter !== 'y' ? 'ON' : 'OFF'
+                      }`
+                    "
+                    @change="changeScatter(index)"
+                  ></v-switch>
                   <v-spacer></v-spacer>
-                  <v-btn small icon>
-                    <v-icon>mdi-pencil</v-icon>
-                  </v-btn>
                   <v-btn small icon @click="deleteXrdData(index)">
                     <v-icon>mdi-delete</v-icon>
                   </v-btn>
@@ -119,8 +142,8 @@
             class="pa-2"
             outlined
             tile
-            max-width="1000"
-            max-height="750"
+            max-width="1050"
+            max-height="800"
           >
             <div id="xrd" ref="xrd"></div>
           </v-card>
@@ -147,6 +170,7 @@ interface XRD {
   mode: string
   type: string
   yaxis: string
+  marker: any
 }
 
 @Component({
@@ -159,9 +183,23 @@ export default class XrdPlot extends Vue {
   graphTitle: string =
     'Al<sub>72.0</sub>Pd<sub>16.4</sub>(Ru<sub>(100-x)%</sub>, Fe<sub>x%</sub>)<sub>11.4</sub>'
 
+  editedGraphWidth: number = 0
+  graphWidth = 0
+  widthRule: any[] = [(v: any) => v <= 1000 || '最大1000pxまでです。']
+  heightRule: any[] = [(v: any) => v <= 750 || '最大750pxまでです。']
+
+  editedGraphHeight: number = 0
+  graphHeight = 0
+
+  editedCommonYshift: number = 100
   commonYshift: number = 100
   regXYLine = new RegExp(/.*[0-9.]+[ \t]+([0-9.]+)?/g)
   regTabSpace = new RegExp(/\s/)
+
+  config: { showLink: boolean; plotlyServerURL: string } = {
+    showLink: true,
+    plotlyServerURL: 'https://chart-studio.plotly.com'
+  }
 
   temp: XRD = {
     rawX: [],
@@ -173,7 +211,14 @@ export default class XrdPlot extends Vue {
     name: 'sample1',
     mode: 'markers',
     type: 'scatter',
-    yaxis: 'y'
+    yaxis: 'y',
+    marker: {
+      symbol: 'line-ns-open',
+      size: 10,
+      line: {
+        width: 3
+      }
+    }
   }
 
   inputData: XRD[] = []
@@ -188,13 +233,15 @@ export default class XrdPlot extends Vue {
     this.renderReact()
   }
 
-  @Watch('commonYshift')
-  onCommonYshift() {
-    this.handleStdz()
-    this.renderReact()
-  }
+  // @Watch('commonYshift')
+  // onCommonYshift() {
+  //   this.handleStdz()
+  //   this.renderReact()
+  // }
 
   mounted() {
+    this.graphWidth = Number(localStorage.getItem('graphWidth'))
+    this.graphHeight = Number(localStorage.getItem('graphHeight'))
     this.renderReact()
   }
 
@@ -245,13 +292,16 @@ export default class XrdPlot extends Vue {
       name: sampleName.trim(),
       mode: 'lines',
       type: 'scatter',
-      yaxis: 'y'
+      yaxis: 'y',
+      marker: {
+        symbol: 'line-ns-open',
+        size: 10,
+        line: {
+          width: 3
+        }
+      }
     }
   }
-
-  // standardization(array: number[], shift: numebr, offset: numebr): number[] {
-  //   return array.map((i) => i)
-  // }
 
   resetOffcet() {
     return this.inputData.map((xrd: XRD) => {
@@ -283,18 +333,23 @@ export default class XrdPlot extends Vue {
 
   deleteXrdData(index: number) {
     this.inputData.splice(index, 1)
-    // yのオフセット再計算
+    this.handleStdz()
     this.renderReact()
   }
 
   renderReact() {
-    // @ts-ignore
-    Plotly.react(this.$refs.xrd, this.inputData, {
-      ...xrdLayout,
-      title: this.graphTitle || xrdLayout.title
-      // width: 1000,
-      // height: 750
-    })
+    Plotly.react(
+      // @ts-ignore
+      this.$refs.xrd,
+      this.inputData,
+      {
+        ...xrdLayout,
+        title: this.graphTitle || xrdLayout.title,
+        width: this.graphWidth || null,
+        height: this.graphHeight || null
+      },
+      this.config
+    )
   }
 
   closeSettings() {
@@ -302,6 +357,12 @@ export default class XrdPlot extends Vue {
   }
 
   saveSettings() {
+    if (this.commonYshift !== this.editedCommonYshift) this.handleStdz()
+    this.graphWidth = this.editedGraphWidth
+    localStorage.setItem('graphWidth', String(this.editedGraphWidth))
+    this.graphHeight = this.editedGraphHeight
+    localStorage.setItem('graphHeight', String(this.editedGraphHeight))
+    this.renderReact()
     this.dialog = false
   }
 
@@ -309,6 +370,12 @@ export default class XrdPlot extends Vue {
     this.inputData[index].yaxis !== 'y'
       ? (this.inputData[index].yaxis = 'y')
       : (this.inputData[index].yaxis = 'y2')
+  }
+
+  changeScatter(index: number) {
+    this.inputData[index].mode !== 'lines'
+      ? (this.inputData[index].mode = 'lines')
+      : (this.inputData[index].mode = 'markers')
   }
 }
 </script>
