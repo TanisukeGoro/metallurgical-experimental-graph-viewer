@@ -90,6 +90,7 @@ export default class FileDrop extends Vue {
   /**
    * upload event...
    */
+  // eslint-disable-next-line
   @Emit()
   filesSelected(fileList: FileList) {
     this.dragover = false

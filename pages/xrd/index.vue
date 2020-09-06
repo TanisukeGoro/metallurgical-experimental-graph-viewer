@@ -95,9 +95,10 @@
               color="primary"
               outlined
               class="mb-2"
-              v-bind="attrs"
-              v-on="on"
-              @click="inputData = []"
+              @click="
+                inputData = []
+                renderReact()
+              "
               >グラフデータクリア</v-btn
             >
             <!-- =============== ダイアログ=================== -->
@@ -121,9 +122,9 @@
                   <v-col md="6" class="py-0">
                     <v-text-field
                       v-model="xrd.shiftX"
-                      disabled
                       dense
                       label="x-shift [2θ]"
+                      @input="updatePlots"
                     ></v-text-field>
                   </v-col>
                   <v-col md="6" class="py-0"
@@ -195,6 +196,12 @@ interface XRD {
   marker: any
 }
 
+// x, yの規格化を行うか否かを指定
+interface FixedStd {
+  x: boolean
+  y: boolean
+}
+
 @Component({
   components: {
     FileDrop
@@ -249,21 +256,10 @@ export default class XrdPlot extends Vue {
 
   inputData: XRD[] = []
 
-  @Watch('inputData', { deep: true })
-  onInputData() {
-    this.renderReact()
-  }
-
   @Watch('graphTitle')
   onGraphTitle() {
     this.renderReact()
   }
-
-  // @Watch('commonYshift')
-  // onCommonYshift() {
-  //   this.handleStdz()
-  //   this.renderReact()
-  // }
 
   mounted() {
     this.graphWidth = Number(localStorage.getItem('graphWidth'))
@@ -292,7 +288,7 @@ export default class XrdPlot extends Vue {
         const xrd = this.handleInputFileData(item.name, e.target.result)
         if (xrd.name === 'sample1') return false
         this.inputData.push(xrd)
-        this.handleStdz()
+        this.handleStdz({ x: false, y: true })
         this.renderReact()
       }
     }
@@ -308,11 +304,11 @@ export default class XrdPlot extends Vue {
       count.split(this.regTabSpace).map(Number)
     )
     const rawX = xyData.map((i) => i[0])
-    const rawInt = xyData.map((i) => i[1])
+    const rawY = xyData.map((i) => i[1])
 
     return {
       rawX,
-      rawY: rawInt,
+      rawY,
       x: rawX,
       y: [],
       shiftX: 0,
@@ -332,25 +328,46 @@ export default class XrdPlot extends Vue {
   }
 
   resetOffcet() {
-    return this.inputData.map((xrd: XRD) => {
+    this.inputData = this.inputData.map((xrd: XRD) => {
       return { ...xrd, x: xrd.rawX, y: xrd.rawY }
     })
+    this.renderReact()
   }
 
-  handleStdz() {
-    if (this.inputData.length === 1)
-      return (this.inputData = this.resetOffcet())
+  updatePlots() {
+    this.handleStdz({ x: true, y: true })
+    this.reactAsCurrentLayout()
+  }
+
+  reactAsCurrentLayout() {
+    Plotly.react(
+      this.$refs.xrd as Plotly.PlotlyHTMLElement,
+      // @ts-ignore
+      this.inputData,
+      {
+        // @ts-ignore
+        ...this.$refs.xrd.layout
+      },
+      this.config
+    )
+  }
+
+  handleStdz(fixedstd: FixedStd) {
+    if (this.inputData.length === 1) return this.resetOffcet()
 
     this.inputData = this.inputData.map((xrd, index) => {
       // int最大値
       const maxInt = this.maxIntData(xrd.rawY)
-
       return {
         ...xrd,
-        x: xrd.rawX.map((theta) => theta + xrd.shiftX),
-        y: xrd.rawY.map(
-          (int) => (int / maxInt) * 100 + index * this.commonYshift
-        )
+        x: fixedstd.x
+          ? xrd.rawX.map((theta) => theta + Number(xrd.shiftX))
+          : xrd.x, // xを更新しないならそのまま
+        y: fixedstd.y
+          ? xrd.rawY.map(
+              (int) => (int / maxInt) * 100 + index * this.commonYshift
+            )
+          : xrd.y // Yを更新しないならそのまま
       }
     })
   }
@@ -361,14 +378,15 @@ export default class XrdPlot extends Vue {
 
   deleteXrdData(index: number) {
     this.inputData.splice(index, 1)
-    this.handleStdz()
+    this.handleStdz({ x: false, y: true })
     this.renderReact()
   }
 
   renderReact() {
+    console.log('renderReact')
     Plotly.react(
+      this.$refs.xrd as Plotly.PlotlyHTMLElement,
       // @ts-ignore
-      this.$refs.xrd,
       this.inputData,
       {
         ...xrdLayout,
@@ -392,7 +410,9 @@ export default class XrdPlot extends Vue {
   }
 
   saveSettings() {
-    if (this.commonYshift !== this.editedCommonYshift) this.handleStdz()
+    if (this.commonYshift !== this.editedCommonYshift)
+      this.handleStdz({ x: false, y: true })
+
     this.graphWidth = this.editedGraphWidth
     localStorage.setItem('graphWidth', String(this.editedGraphWidth))
     this.graphHeight = this.editedGraphHeight
@@ -405,12 +425,14 @@ export default class XrdPlot extends Vue {
     this.inputData[index].yaxis !== 'y'
       ? (this.inputData[index].yaxis = 'y')
       : (this.inputData[index].yaxis = 'y2')
+    this.renderReact()
   }
 
   changeScatter(index: number) {
     this.inputData[index].mode !== 'lines'
       ? (this.inputData[index].mode = 'lines')
       : (this.inputData[index].mode = 'markers')
+    this.renderReact()
   }
 
   updateGraph() {
