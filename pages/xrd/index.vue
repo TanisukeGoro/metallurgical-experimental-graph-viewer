@@ -124,7 +124,7 @@
                       v-model="xrd.shiftX"
                       dense
                       label="x-shift [2θ]"
-                      @input="updatePlots"
+                      @change="updatePlots"
                     ></v-text-field>
                   </v-col>
                   <v-col md="6" class="py-0"
