@@ -22,6 +22,9 @@
                 <v-toolbar-title>昇温側</v-toolbar-title>
                 <v-divider class="mx-4" inset vertical></v-divider>
                 <v-spacer></v-spacer>
+                <v-btn :loading="isLoading" @click="saveAsDTA(risingFlow)"
+                  >DTAデータの保存</v-btn
+                >
                 <v-btn :loading="isLoading" @click="copyAsCSV(risingFlow)"
                   >toCSVコピー</v-btn
                 >
@@ -36,6 +39,9 @@
                 <v-toolbar-title>降温側</v-toolbar-title>
                 <v-divider class="mx-4" inset vertical></v-divider>
                 <v-spacer></v-spacer>
+                <v-btn :loading="isLoading" @click="saveAsDTA(downFlow)"
+                  >DTAデータの保存</v-btn
+                >
                 <v-btn :loading="isLoading" @click="copyAsCSV(downFlow)"
                   >toCSVコピー</v-btn
                 >
@@ -115,6 +121,24 @@ export default class App extends Vue {
     this.isLoading = true
     await this.copyToClipboard(this.json2CSV(dta))
     return (this.isLoading = false)
+  }
+
+  saveAsDTA(dta: DTA[]) {
+    const downloadElement: HTMLAnchorElement = document.createElement('a')
+    const downloadText: string[] = dta.map(
+      (data) => `${data.temp}\t${data.dta}\t`
+    )
+
+    downloadElement.href = URL.createObjectURL(
+      new Blob([`Sample  ${this.fileName}\n` + downloadText.join('\n')], {
+        type: 'text/plan'
+      })
+    )
+    downloadElement.download = 'dta.txt'
+    downloadElement.style.display = 'none'
+    document.body.appendChild(downloadElement)
+    downloadElement.click()
+    document.body.removeChild(downloadElement)
   }
 
   copyToClipboard(text: string) {
