@@ -101,6 +101,10 @@
               "
               >グラフデータクリア</v-btn
             >
+            <v-switch
+              v-model="layoutflag"
+              :label="`旧レイアウト: ${layoutflag ? 'ON' : 'OFF'}`"
+            />
             <!-- =============== ダイアログ=================== -->
           </v-card>
           <v-card
@@ -180,7 +184,8 @@
 <script lang="ts">
 import { Vue, Component, Watch } from 'nuxt-property-decorator'
 import * as Plotly from 'plotly.js-dist'
-import xrdLayout from '@/plugins/newxrdLayout'
+import arialblockLayout from '@/plugins/newxrdLayout'
+import timesLayout from '@/plugins/xrdLayout'
 import FileDrop from '@/components/FileDrop.vue'
 
 interface XRD {
@@ -209,6 +214,8 @@ interface FixedStd {
   }
 })
 export default class XrdPlot extends Vue {
+  xrdLayout = arialblockLayout
+  layoutflag: boolean = false
   dialog = false
   graphTitle: string =
     'Al<sub>72.0</sub>Pd<sub>16.4</sub>(Ru<sub>(100-x)%</sub>, Fe<sub>x%</sub>)<sub>11.4</sub>'
@@ -259,6 +266,13 @@ export default class XrdPlot extends Vue {
 
   @Watch('graphTitle')
   onGraphTitle() {
+    this.renderReact()
+  }
+
+  @Watch('layoutflag')
+  onLayoutflag() {
+    // @ts-ignore
+    this.xrdLayout = this.layoutflag ? timesLayout : arialblockLayout
     this.renderReact()
   }
 
@@ -389,19 +403,19 @@ export default class XrdPlot extends Vue {
       // @ts-ignore
       this.inputData,
       {
-        ...xrdLayout,
+        ...this.xrdLayout,
         title: {
-          ...xrdLayout.title,
-          text: this.graphTitle || xrdLayout.title
+          ...this.xrdLayout.title,
+          text: this.graphTitle || this.xrdLayout.title
         },
         width: this.graphWidth || null,
         height: this.graphHeight || null,
         xaxis: {
-          ...xrdLayout.xaxis,
+          ...this.xrdLayout.xaxis,
           range:
             this.minThetaRange && this.maxThetaRange
               ? [this.minThetaRange, this.maxThetaRange]
-              : xrdLayout.xaxis.range
+              : this.xrdLayout.xaxis.range
         }
       },
       this.config
