@@ -134,7 +134,10 @@ export default class App extends Vue {
         type: 'text/plan'
       })
     )
-    downloadElement.download = 'dta.txt'
+    const basename = this.fileName.split('.')
+    basename.pop()
+
+    downloadElement.download = basename.join('.') + '.txt'
     downloadElement.style.display = 'none'
     document.body.appendChild(downloadElement)
     downloadElement.click()
