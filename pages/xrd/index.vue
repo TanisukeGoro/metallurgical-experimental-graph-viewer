@@ -116,6 +116,7 @@
                   v-model="xrd.name"
                   dense
                   label="試料名"
+                  @change="updatePlots"
                 ></v-text-field>
 
                 <v-row>
@@ -179,7 +180,7 @@
 <script lang="ts">
 import { Vue, Component, Watch } from 'nuxt-property-decorator'
 import * as Plotly from 'plotly.js-dist'
-import xrdLayout from '@/plugins/xrdLayout'
+import xrdLayout from '@/plugins/newxrdLayout'
 import FileDrop from '@/components/FileDrop.vue'
 
 interface XRD {
@@ -383,14 +384,16 @@ export default class XrdPlot extends Vue {
   }
 
   renderReact() {
-    console.log('renderReact')
     Plotly.react(
       this.$refs.xrd as Plotly.PlotlyHTMLElement,
       // @ts-ignore
       this.inputData,
       {
         ...xrdLayout,
-        title: this.graphTitle || xrdLayout.title,
+        title: {
+          ...xrdLayout.title,
+          text: this.graphTitle || xrdLayout.title
+        },
         width: this.graphWidth || null,
         height: this.graphHeight || null,
         xaxis: {
