@@ -27,84 +27,85 @@
                 </v-col>
               </v-row>
             </v-card-actions>
-            <!-- =============== ダイアログ=================== -->
-            <v-dialog v-model="dialog" max-width="800px">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  color="primary"
-                  dark
-                  class="mb-2"
-                  v-bind="attrs"
-                  v-on="on"
-                  >設定</v-btn
-                >
-              </template>
-              <v-card>
-                <v-card-title>
-                  <span class="headline">設定</span>
-                </v-card-title>
-                <v-card-text>
-                  <v-container>
-                    <v-row>
-                      <v-col cols="12" sm="6" md="12">
-                        <v-text-field
-                          v-model="graphTitle"
-                          dense
-                          label="グラフのタイトル(HTML対応可)"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field
-                          v-model="commonYshift"
-                          dense
-                          label="Y軸共通シフト"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field
-                          v-model="editedGraphWidth"
-                          :rules="widthRule"
-                          dense
-                          label="グラフ横幅"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field
-                          v-model="editedGraphHeight"
-                          :rules="heightRule"
-                          dense
-                          label="グラフ縦幅"
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card-text>
+            <v-card-actions>
+              <!-- =============== ダイアログ=================== -->
+              <v-dialog v-model="dialog" max-width="800px">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    color="primary"
+                    dark
+                    class="mr-1"
+                    v-bind="attrs"
+                    v-on="on"
+                    >設定</v-btn
+                  >
+                </template>
+                <v-card>
+                  <v-card-title>
+                    <span class="headline">設定</span>
+                  </v-card-title>
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-col cols="12" sm="6" md="12">
+                          <v-text-field
+                            v-model="graphTitle"
+                            dense
+                            label="グラフのタイトル(HTML対応可)"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                          <v-text-field
+                            v-model="commonYshift"
+                            dense
+                            label="Y軸共通シフト"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                          <v-text-field
+                            v-model="editedGraphWidth"
+                            :rules="widthRule"
+                            dense
+                            label="グラフ横幅"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                          <v-text-field
+                            v-model="editedGraphHeight"
+                            :rules="heightRule"
+                            dense
+                            label="グラフ縦幅"
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
 
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="closeSettings"
-                    >Cancel</v-btn
-                  >
-                  <v-btn color="blue darken-1" text @click="saveSettings"
-                    >Save</v-btn
-                  >
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-            <v-btn
-              color="primary"
-              outlined
-              class="mb-2"
-              @click="
-                inputData = []
-                renderReact()
-              "
-              >グラフデータクリア</v-btn
-            >
-            <v-switch
-              v-model="layoutflag"
-              :label="`旧レイアウト: ${layoutflag ? 'ON' : 'OFF'}`"
-            />
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" text @click="closeSettings"
+                      >Cancel</v-btn
+                    >
+                    <v-btn color="blue darken-1" text @click="saveSettings"
+                      >Save</v-btn
+                    >
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+
+              <v-btn
+                color="primary"
+                outlined
+                class="mr-1"
+                @click="
+                  inputData = []
+                  renderReact()
+                "
+                >クリア</v-btn
+              >
+              <v-switch v-model="layoutflag" :label="`旧レイアウト`" />
+            </v-card-actions>
+
             <!-- =============== ダイアログ=================== -->
           </v-card>
           <v-card
