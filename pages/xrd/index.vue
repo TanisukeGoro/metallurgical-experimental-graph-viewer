@@ -104,7 +104,7 @@
                 >クリア</v-btn
               >
               <!-- FIXME: 旧レイアウトの削除 -->
-              <!-- <v-switch v-model="layoutflag" :label="`旧レイアウト`" /> -->
+              <v-switch v-model="layoutflag" :label="`旧レイアウト`" />
               <v-btn
                 color="primary"
                 outlined
