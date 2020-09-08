@@ -103,7 +103,15 @@
                 "
                 >クリア</v-btn
               >
-              <v-switch v-model="layoutflag" :label="`旧レイアウト`" />
+              <!-- FIXME: 旧レイアウトの削除 -->
+              <!-- <v-switch v-model="layoutflag" :label="`旧レイアウト`" /> -->
+              <v-btn
+                color="primary"
+                outlined
+                class="mr-1"
+                @click="saveGraphData()"
+                >グラフデータ保存</v-btn
+              >
             </v-card-actions>
 
             <!-- =============== ダイアログ=================== -->
@@ -171,7 +179,9 @@
           <file-drop class="mb-2" @files-selected="handleInputFile">
             <v-card id="plotarea" class="pa-2" outlined tile max-height="800">
               <v-card-text v-if="inputData.length == 0">
-                ここにファイルをドラック&ドロップでXRDデータを追加
+                ここにファイルをドラック&ドロップでXRDデータを追加<br />
+                グラフの保存、呼び出しも可能になりました。<br />
+                jsonファイルをここにドラックして表示できます。
               </v-card-text>
               <div id="xrd" ref="xrd"></div>
             </v-card>
@@ -290,7 +300,7 @@ export default class XrdPlot extends Vue {
     // @ts-ignore
     for (const item of fileList) {
       // eslint-disable-next-line
-      console.log(item.name)
+      console.log(item)
       const reader = new FileReader()
       reader.addEventListener('progress', (event) => {
         if (event.loaded && event.total) {
@@ -301,6 +311,18 @@ export default class XrdPlot extends Vue {
       })
       reader.readAsText(item)
       reader.onload = (e: any) => {
+        // 保存データの呼び出し
+        if (item.name.split('.').pop() === 'json') {
+          console.log('item.name :>> ', item.name)
+          const jsonData = JSON.parse(e.target.result)
+          this.inputData = jsonData.data as XRD[]
+          this.inputData.map((i) => {
+            return { ...i, yaxis: 'y' }
+          })
+          this.xrdLayout = { ...jsonData.layout, ...timesLayout }
+          this.renderReact()
+          return 0
+        }
         const xrd = this.handleInputFileData(item.name, e.target.result)
         if (xrd.name === 'sample1') return false
         this.inputData.push(xrd)
@@ -457,6 +479,26 @@ export default class XrdPlot extends Vue {
     localStorage.setItem('minThetaRange', String(this.minThetaRange))
     localStorage.setItem('maxThetaRange', String(this.maxThetaRange))
     this.renderReact()
+  }
+
+  saveGraphData() {
+    const plotRef = document.getElementById('xrd')
+    const downloadElement: HTMLAnchorElement = document.createElement('a')
+
+    downloadElement.href = URL.createObjectURL(
+      new Blob(
+        // @ts-ignore
+        [JSON.stringify({ data: plotRef?.data, layout: plotRef?.layout })],
+        {
+          type: 'text/plan'
+        }
+      )
+    )
+    downloadElement.download = 'plots-data.json'
+    downloadElement.style.display = 'none'
+    document.body.appendChild(downloadElement)
+    downloadElement.click()
+    document.body.removeChild(downloadElement)
   }
 }
 </script>
