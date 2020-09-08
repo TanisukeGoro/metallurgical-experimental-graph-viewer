@@ -104,7 +104,6 @@
                 >クリア</v-btn
               >
               <!-- FIXME: 旧レイアウトの削除 -->
-              <v-switch v-model="layoutflag" :label="`旧レイアウト`" />
               <v-btn
                 color="primary"
                 outlined
@@ -112,6 +111,7 @@
                 @click="saveGraphData()"
                 >グラフデータ保存</v-btn
               >
+              <v-switch v-model="layoutflag" :label="`旧レイアウト`" />
             </v-card-actions>
 
             <!-- =============== ダイアログ=================== -->
