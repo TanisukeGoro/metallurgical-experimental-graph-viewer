@@ -313,7 +313,6 @@ export default class XrdPlot extends Vue {
       reader.onload = (e: any) => {
         // 保存データの呼び出し
         if (item.name.split('.').pop() === 'json') {
-          console.log('item.name :>> ', item.name)
           const jsonData = JSON.parse(e.target.result)
           this.inputData = jsonData.data as XRD[]
           this.inputData.map((i) => {
@@ -395,7 +394,9 @@ export default class XrdPlot extends Vue {
 
     this.inputData = this.inputData.map((xrd, index) => {
       // int最大値
-      const maxInt = this.maxIntData(xrd.rawY)
+      const minIntoffset = Math.abs(this.minIntData(xrd.rawY))
+      const maxInt = this.maxIntData(xrd.rawY) + minIntoffset
+
       return {
         ...xrd,
         x: fixedstd.x
@@ -403,7 +404,9 @@ export default class XrdPlot extends Vue {
           : xrd.x, // xを更新しないならそのまま
         y: fixedstd.y
           ? xrd.rawY.map(
-              (int) => (int / maxInt) * 100 + index * this.commonYshift
+              (int) =>
+                ((int + minIntoffset) / maxInt) * 100 +
+                index * this.commonYshift
             )
           : xrd.y // Yを更新しないならそのまま
       }
@@ -412,6 +415,10 @@ export default class XrdPlot extends Vue {
 
   maxIntData(dta: number[]): number {
     return dta.reduce((prev, current) => (prev > current ? prev : current))
+  }
+
+  minIntData(dta: number[]): number {
+    return dta.reduce((prev, current) => (prev < current ? prev : current))
   }
 
   deleteXrdData(index: number) {
