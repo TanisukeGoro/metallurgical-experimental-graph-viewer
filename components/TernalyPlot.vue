@@ -6,6 +6,16 @@
           <v-card-title primary-title>
             状態図画像の位置調整
           </v-card-title>
+          <v-card-text>
+            画像の位置がブラウザのウィンドウサイズによって大幅にずれるようです。<br />1440px
+            × 820px(macbook
+            13インチ)に合わせているので画面サイズをその辺すればたぶん大体合うと思うよ.
+            <br /><a
+              href="https://saruwakakun.com/html-css/basic/chrome-dev-tool#section7"
+              target="_blank"
+              >デベロッパーツール開いて画面サイズをいい感じにする方法.</a
+            >
+          </v-card-text>
           <v-card-actions class="mx-3">
             <v-slider
               v-model="imgXpoint"

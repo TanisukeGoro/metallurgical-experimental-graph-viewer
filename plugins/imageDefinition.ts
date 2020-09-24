@@ -37,10 +37,31 @@ const images: Select[] = [
     size: 1.22
   },
   {
+    title: 'Al-Pd-Fe 1020C Partial Isothermal Section',
+    src: '/diagrams/al_pd_fe_1020.jpg',
+    x: 0.033,
+    y: 0.637,
+    size: 0.94
+  },
+  {
+    title: 'Al-Pd-Fe 995C Partial Isothermal Section',
+    src: '/diagrams/al_pd_fe_995.jpg',
+    x: 0.052,
+    y: 0.63,
+    size: 0.93
+  },
+  {
+    title: 'Al-Pd-Fe 975C Partial Isothermal Section',
+    src: '/diagrams/al_pd_fe_975.jpg',
+    x: 0.059,
+    y: 0.637,
+    size: 0.93
+  },
+  {
     title: 'Al-Pd-Fe 900C Partial Isothermal Section',
     src: '/diagrams/al_pd_fe_900.jpg',
     x: 0.033,
-    y: 0.647,
+    y: 0.651,
     size: 1.02
   },
   {
