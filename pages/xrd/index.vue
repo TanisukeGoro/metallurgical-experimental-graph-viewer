@@ -116,64 +116,83 @@
 
             <!-- =============== ダイアログ=================== -->
           </v-card>
-          <v-card
-            v-for="(xrd, index) in inputData"
-            :key="index"
-            class="pa-2 "
-            outlined
-            tile
+          <draggable
+            :disabled="false"
+            :list="inputData"
+            ghost-class="ghost"
+            handle=".handle"
+            @start="dragging = true"
+            @end="
+              dragging = false
+              handleStdz({ x: false, y: true })
+              renderReact()
+            "
           >
-            <v-card class="mb-2" outlined tile>
-              <v-card-text class="pb-0">
-                <v-text-field
-                  v-model="xrd.name"
-                  dense
-                  label="試料名"
-                  @change="updatePlots"
-                ></v-text-field>
+            <v-card
+              v-for="(xrd, index) in inputData"
+              :key="index"
+              class="pa-2"
+              outlined
+              tile
+            >
+              <v-card class="mb-2" outlined tile>
+                <v-card-text class="pb-0">
+                  <v-text-field
+                    v-model="xrd.name"
+                    dense
+                    label="試料名"
+                    @change="updatePlots"
+                  >
+                    <template v-slot:prepend>
+                      <v-icon color="gray darken-2" class="handle">
+                        mdi-view-headline
+                      </v-icon>
+                    </template></v-text-field
+                  >
 
-                <v-row>
-                  <v-col md="6" class="py-0">
-                    <v-text-field
-                      v-model="xrd.shiftX"
-                      dense
-                      label="x-shift [2θ]"
-                      @change="updatePlots"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col md="6" class="py-0"
-                    ><v-text-field
-                      v-model="xrd.shiftY"
-                      disabled
-                      dense
-                      label="y-shift"
-                    ></v-text-field
-                  ></v-col>
-                </v-row>
-              </v-card-text>
-              <v-card-actions>
-                <v-switch
-                  :input-value="xrd.yaxis !== 'y'"
-                  :label="`第2軸: ${xrd.yaxis !== 'y' ? 'ON' : 'OFF'}`"
-                  @change="changeSecondaryAxis(index)"
-                ></v-switch>
-                <v-switch
-                  :disabled="xrd.rawX.length > 300"
-                  :input-value="xrd.mode !== 'lines'"
-                  :label="
-                    `回折位置のみファイル用: ${
-                      xrd.isScatter !== 'y' ? 'ON' : 'OFF'
-                    }`
-                  "
-                  @change="changeScatter(index)"
-                ></v-switch>
-                <v-spacer></v-spacer>
-                <v-btn small icon @click="deleteXrdData(index)">
-                  <v-icon>mdi-delete</v-icon>
-                </v-btn>
-              </v-card-actions>
+                  <v-row>
+                    <v-col md="6" class="py-0">
+                      <v-text-field
+                        v-model="xrd.shiftX"
+                        dense
+                        label="x-shift [2θ]"
+                        @change="updatePlots"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col md="6" class="py-0"
+                      ><v-text-field
+                        v-model="xrd.shiftY"
+                        disabled
+                        dense
+                        label="y-shift"
+                      ></v-text-field
+                    ></v-col>
+                  </v-row>
+                </v-card-text>
+                <v-card-actions>
+                  <v-switch
+                    :input-value="xrd.yaxis !== 'y'"
+                    :label="`第2軸: ${xrd.yaxis !== 'y' ? 'ON' : 'OFF'}`"
+                    @change="changeSecondaryAxis(index)"
+                  ></v-switch>
+                  <v-switch
+                    :disabled="xrd.rawX.length > 300"
+                    :input-value="xrd.mode !== 'lines'"
+                    :label="
+                      `回折位置のみファイル用: ${
+                        xrd.isScatter !== 'y' ? 'ON' : 'OFF'
+                      }`
+                    "
+                    @change="changeScatter(index)"
+                  ></v-switch>
+                  <v-spacer></v-spacer>
+                  <v-btn small icon @click="deleteXrdData(index)">
+                    <v-icon>mdi-delete</v-icon>
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
             </v-card>
-          </v-card>
+          </draggable>
         </v-col>
         <v-col md="8">
           <file-drop class="mb-2" @files-selected="handleInputFile">
@@ -194,6 +213,7 @@
 
 <script lang="ts">
 import { Vue, Component, Watch } from 'nuxt-property-decorator'
+import draggable from 'vuedraggable'
 import * as Plotly from 'plotly.js-dist'
 import arialblockLayout from '@/plugins/newxrdLayout'
 import timesLayout from '@/plugins/xrdLayout'
@@ -221,10 +241,12 @@ interface FixedStd {
 
 @Component({
   components: {
-    FileDrop
+    FileDrop,
+    draggable
   }
 })
 export default class XrdPlot extends Vue {
+  dragging: boolean = false
   xrdLayout = arialblockLayout
   layoutflag: boolean = false
   dialog = false
@@ -428,6 +450,9 @@ export default class XrdPlot extends Vue {
   }
 
   renderReact() {
+    this.inputData.forEach((element) => {
+      console.log('element.name :>> ', element.name)
+    })
     Plotly.react(
       this.$refs.xrd as Plotly.PlotlyHTMLElement,
       // @ts-ignore
@@ -514,5 +539,12 @@ export default class XrdPlot extends Vue {
 .databar {
   height: 80vh;
   overflow: auto;
+}
+.ghost {
+  opacity: 0.5;
+  background: #c8ebfb;
+}
+.handle {
+  cursor: move;
 }
 </style>

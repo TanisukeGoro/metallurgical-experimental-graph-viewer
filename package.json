@@ -19,6 +19,7 @@
     "nuxt": "^2.0.0",
     "nuxt-property-decorator": "^2.7.2",
     "plotly.js-dist": "^1.54.7",
+    "vuedraggable": "^2.24.1",
     "vuetify": "^2.3.10"
   },
   "devDependencies": {
