@@ -450,9 +450,6 @@ export default class XrdPlot extends Vue {
   }
 
   renderReact() {
-    this.inputData.forEach((element) => {
-      console.log('element.name :>> ', element.name)
-    })
     Plotly.react(
       this.$refs.xrd as Plotly.PlotlyHTMLElement,
       // @ts-ignore
@@ -542,7 +539,7 @@ export default class XrdPlot extends Vue {
 }
 .ghost {
   opacity: 0.5;
-  background: #c8ebfb;
+  background: #c8ebfb !important;
 }
 .handle {
   cursor: move;

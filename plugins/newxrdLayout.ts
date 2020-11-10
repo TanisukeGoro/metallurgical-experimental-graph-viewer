@@ -2,7 +2,7 @@ const xrdLayout = {
   title: {
     text: '',
     font: {
-      size: 18,
+      size: 24,
       color: 'black',
       family: 'Times New Roman, serif'
     },
@@ -19,8 +19,9 @@ const xrdLayout = {
     mirror: 'ticks',
     showgrid: false,
     showline: true,
+    automargin: true,
     tickfont: {
-      size: 18,
+      size: 24,
       color: 'black',
       family: 'Times New Roman, serif'
     },
@@ -29,7 +30,7 @@ const xrdLayout = {
     linewidth: 2,
     tickwidth: 2,
     titlefont: {
-      size: 22,
+      size: 30,
       color: 'black',
       family: 'Times New Roman, sans-serif'
     }
@@ -40,8 +41,9 @@ const xrdLayout = {
     mirror: 'ticks',
     showgrid: false,
     showline: true,
+    automargin: true,
     tickfont: {
-      size: 18,
+      size: 24,
       color: 'black',
       family: 'Times New Roman, serif'
     },
@@ -50,7 +52,7 @@ const xrdLayout = {
     linewidth: 2,
     tickwidth: 2,
     titlefont: {
-      size: 22,
+      size: 30,
       color: 'black',
       family: 'Times New Roman, sans-serif'
     },
