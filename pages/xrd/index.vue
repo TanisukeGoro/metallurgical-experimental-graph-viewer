@@ -259,7 +259,7 @@ export default class XrdPlot extends Vue {
   editedGraphWidth: number = 0
   graphWidth = 0
   widthRule: any[] = [(v: any) => v <= 1000 || '最大1000pxまでです。']
-  heightRule: any[] = [(v: any) => v <= 750 || '最大750pxまでです。']
+  heightRule: any[] = [(v: any) => v <= 800 || '最大800pxまでです。']
 
   editedGraphHeight: number = 0
   graphHeight = 0
