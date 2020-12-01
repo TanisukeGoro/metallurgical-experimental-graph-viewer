@@ -103,6 +103,8 @@
                 "
                 >クリア</v-btn
               >
+            </v-card-actions>
+            <v-card-actions>
               <!-- FIXME: 旧レイアウトの削除 -->
               <v-btn
                 color="primary"
@@ -113,6 +115,9 @@
               >
               <v-switch v-model="layoutflag" :label="`旧レイアウト`" />
             </v-card-actions>
+            <v-card-text>
+              テスト版ですが、平滑化用のアルゴリズムを実装しました。<v-icon>mdi-chart-bell-curve-cumulative</v-icon>アイコンで一応できるはず。境界条件やエラー処理書いてないのでバグりやすいので注意
+            </v-card-text>
 
             <!-- =============== ダイアログ=================== -->
           </v-card>
@@ -188,6 +193,9 @@
                   <v-spacer></v-spacer>
                   <v-btn small icon @click="deleteXrdData(index)">
                     <v-icon>mdi-delete</v-icon>
+                  </v-btn>
+                  <v-btn small icon @click="smoozing(index)">
+                    <v-icon>mdi-chart-bell-curve-cumulative</v-icon>
                   </v-btn>
                 </v-card-actions>
               </v-card>
@@ -409,6 +417,23 @@ export default class XrdPlot extends Vue {
       },
       this.config
     )
+  }
+
+  smoozing(index: number) {
+    const y = this.inputData[index].y
+    console.log(y)
+    this.inputData[index].y = y.map((_y, index): number => {
+      let sum = 0
+      if (index > 3) sum += -2 * y[index - 3]
+      if (index > 2) sum += 3 * y[index - 2]
+      if (index > 1) sum += 6 * y[index - 1]
+      sum += -2 * _y
+      if (index + 1 < y.length) sum += 6 * y[index + 1]
+      if (index + 2 < y.length) sum += 3 * y[index + 2]
+      if (index + 3 < y.length) sum += -2 * y[index + 3]
+      return sum / 21
+    })
+    this.renderReact()
   }
 
   handleStdz(fixedstd: FixedStd) {
