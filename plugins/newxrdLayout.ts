@@ -66,6 +66,7 @@ const xrdLayout = {
     zeroline: false,
     showgrid: false
   },
+  showlegend: true,
   legend: {
     x: 0.55,
     y: 1,

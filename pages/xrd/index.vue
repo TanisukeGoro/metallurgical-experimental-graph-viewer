@@ -103,6 +103,7 @@
                 "
                 >クリア</v-btn
               >
+              <v-switch v-model="isLegend" label="凡例のON/OFF" />
             </v-card-actions>
             <v-card-actions>
               <!-- FIXME: 旧レイアウトの削除 -->
@@ -113,7 +114,7 @@
                 @click="saveGraphData()"
                 >グラフデータ保存</v-btn
               >
-              <v-switch v-model="layoutflag" :label="`旧レイアウト`" />
+              <v-switch v-model="layoutflag" label="旧レイアウト" />
             </v-card-actions>
             <v-card-text>
               テスト版ですが、平滑化用のアルゴリズムを実装しました。<v-icon>mdi-chart-bell-curve-cumulative</v-icon>アイコンで一応できるはず。境界条件やエラー処理書いてないのでバグりやすいので注意
@@ -283,6 +284,8 @@ export default class XrdPlot extends Vue {
     editable: true
   }
 
+  isLegend: boolean = true
+
   temp: XRD = {
     rawX: [],
     rawY: [],
@@ -307,6 +310,11 @@ export default class XrdPlot extends Vue {
 
   @Watch('graphTitle')
   onGraphTitle() {
+    this.renderReact()
+  }
+
+  @Watch('isLegend')
+  onIsLegend() {
     this.renderReact()
   }
 
@@ -493,7 +501,8 @@ export default class XrdPlot extends Vue {
             this.minThetaRange && this.maxThetaRange
               ? [this.minThetaRange, this.maxThetaRange]
               : this.xrdLayout.xaxis.range
-        }
+        },
+        showlegend: this.isLegend
       },
       this.config
     )
