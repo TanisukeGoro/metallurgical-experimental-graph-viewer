@@ -278,10 +278,16 @@ export default class XrdPlot extends Vue {
   regXYLine = new RegExp(/.*[0-9.]+[ \t]+([0-9.]+)?/g)
   regTabSpace = new RegExp(/\s/)
 
-  config: { showLink: boolean; plotlyServerURL: string; editable: boolean } = {
+  config: {
+    showLink: boolean
+    plotlyServerURL: string
+    editable: boolean
+    displaylogo: boolean
+  } = {
     showLink: true,
     plotlyServerURL: 'https://chart-studio.plotly.com',
-    editable: true
+    editable: true,
+    displaylogo: false
   }
 
   isLegend: boolean = true
