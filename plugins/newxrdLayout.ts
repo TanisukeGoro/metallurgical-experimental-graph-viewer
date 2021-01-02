@@ -71,7 +71,8 @@ const xrdLayout = {
     x: 0.55,
     y: 1,
     font: {
-      size: 16
+      size: 16,
+      family: 'Times New Roman, sans-serif'
     },
     traceorder: 'reversed'
   },
