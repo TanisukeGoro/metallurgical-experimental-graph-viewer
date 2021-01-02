@@ -270,12 +270,12 @@ export default class XrdPlot extends Vue {
   minThetaRange: number = 0
   maxThetaRange: number = 0
 
-  editedGraphWidth: number = 0
+  editedGraphWidth: number = Number(localStorage.getItem('graphWidth'))
   graphWidth = 0
   widthRule: any[] = [(v: any) => v <= 1000 || '最大1000pxまでです。']
   heightRule: any[] = [(v: any) => v <= 800 || '最大800pxまでです。']
 
-  editedGraphHeight: number = 0
+  editedGraphHeight: number = Number(localStorage.getItem('graphHeight'))
   graphHeight = 0
 
   editedCommonYshift: number = 100
