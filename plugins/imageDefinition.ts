@@ -37,6 +37,13 @@ const images: Select[] = [
     size: 1.22
   },
   {
+    title: 'Al-Pd-Fe 900-1020C Partial Isothermal Section',
+    src: '/diagrams/al_pd_fe_900-1020.png',
+    x: 0.061,
+    y: 0.633,
+    size: 0.92
+  },
+  {
     title: 'Al-Pd-Fe 1020C Partial Isothermal Section',
     src: '/diagrams/al_pd_fe_1020.jpg',
     x: 0.033,

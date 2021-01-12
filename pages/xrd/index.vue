@@ -440,7 +440,6 @@ export default class XrdPlot extends Vue {
 
   smoozing(index: number) {
     const y = this.inputData[index].y
-    console.log(y)
     this.inputData[index].y = y.map((_y, index): number => {
       let sum = 0
       if (index > 3) sum += -2 * y[index - 3]
